@@ -62,12 +62,13 @@ Qemu версии не ниже 0.9.1.
 набором инструкций ARMv5TE. PXA255 также имеет в своем составе несколько блоков
 периферии. Некоторая периферия будет описана в этом курсе далее.
 
-Installing Qemu in Debian
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Инсталляция Qemu на Debian
+~~~~~~~~~~~~~~~~~~~~~~~~~~
  
-This tutorial requires qemu version 0.9.1 or above. The qemu package
-available in Debian Squeeze/Wheezy, meets this requirement. Install
-`qemu` using `apt-get`.
+Этот учебник требует Qemu версии не ниже 0.9.1. Пакет Qemu доступный для
+современных дистрибутивов Debian, вполне удовлетворяет этим условиям, и
+собирать свежий Qemu из исходников совсем не требуется (хотя может быть и
+очень хочется). Установим пакет командой:
 
 ------
 $ apt-get install qemu
