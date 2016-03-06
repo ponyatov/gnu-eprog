@@ -584,12 +584,6 @@ stop:   b stop
 * также используются отладчиком, чтобы показывать адреса переходов
 в виде понятных программисту сиволов, а не мутных числовых констант
 
-Using the assembler directive `.equ`, it is also possible to manually
-insert entries in the symbol table, to map names to values, which are
-not necessarily addresses. Whenever the assembler encounters these
-names, it replaces them by their corresponding values. These names and
-label names are together called symbol names.
-
 Синтаксис директивы .equ:
 
 ------
