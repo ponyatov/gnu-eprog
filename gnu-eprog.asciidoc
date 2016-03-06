@@ -521,20 +521,35 @@ nalpha:   .byte 'Z' - 'A' + 1
 адреса`. Ее нужно использовать только если в код вставляются байты или неполные
 32-битные слова.
 
-String Length
-~~~~~~~~~~~~~
+Вычисление длины строки
+~~~~~~~~~~~~~~~~~~~~~~~
 
-The following code calculates the length of string and stores the
-length in register `r1`.
+Этот код вычисляет длину строки и помещает ее в `r1`:
 
-.String Length
+.Длина строки
 [lang="armasm"]
 ------
-include::code/strlen.s[]
+        .text
+        b start
+
+str:    .asciz "Hello World"
+
+        .equ   nul, 0
+
+        .align
+start:  ldr   r0, =str          @ r0 = &str
+        mov   r1, #0
+
+loop:   ldrb  r2, [r0], #1      @ r2 = *(r0++)
+        add   r1, r1, #1        @ r1 += 1
+        cmp   r2, #nul          @ if (r1 != nul)
+        bne   loop              @ goto loop
+
+        sub   r1, r1, #1        @ r1 -= 1
+stop:   b stop
 ------
 
-The code introduces two new assembler directives - `.asciz` and
-`.equ`. The assembler directives are described below.
+Код иллюстрирует применение директив `.asciz` и `.equ`.
 
 `.asciz` Directive
 ^^^^^^^^^^^^^^^^^^
