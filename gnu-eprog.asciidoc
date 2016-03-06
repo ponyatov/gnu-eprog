@@ -339,7 +339,7 @@ ponyatov@bs:/tmp$
 файл,
 который будет считаться образом флеш-памяти. Формат флеша очень прост -- это
 побайтный образ флеша без каких-либо полей или заголовков, т.е. это тот же самый
-\term{бинарный формат}, описанный выше.
+`бинарный формат`, описанный выше.
 
 Для тестирования программы в эмуляторе Gumstix connex, сначала мы создаем
 16-мегабайтный файл флеша, копируя 16М нулей из файла `/dev/zero` с
@@ -448,37 +448,46 @@ PSR=400001d3 -Z-- A svc32
 ------
 
 [[asm-directives]]
-More Assembler Directives
--------------------------
+Директивы ассемблера
+--------------------
 
-In this section, we will describe some commonly used assembler
-directives, using two example programs.
+В этом разделе мы посмотрим несколько часто используемых директив ассемблера,
+используя в качестве примера пару простых программ.
 
-  1. A program to sum an array
-  2. A program to calculate the length of a string
+Суммирование массива
+~~~~~~~~~~~~~~~~~~~~
 
-Sum an Array
-~~~~~~~~~~~~
+Следующий код вычисляет сумму массива байт и сохраняет результат в `r3`:
 
-The following code sums an array of bytes and stores the result in
-`r3`.
-
-.Sum an Array
+.Сумма массива
 [lang="armasm"]
 ------
-include::code/sum.s[]
+        .text
+entry:  b start                 @ перепрыгиваем данные
+arr:    .byte 10, 20, 25        @ read-only массив байт
+eoa:                            @ адрес конца массива + 1
+
+        .align
+start:
+        ldr   r0, =eoa          @ r0 = &eoa
+        ldr   r1, =arr          @ r1 = &arr
+        mov   r3, #0            @ r3 = 0
+loop:   ldrb  r2, [r1], #1      @ r2 = *r1++
+        add   r3, r2, r3        @ r3 += r2
+        cmp   r1, r0            @ if (r1 != r2)
+        bne   loop              @ goto loop
+stop:   b stop
 ------
 
-The code introduces two new assembler directives -- `.byte` and
-`.align`. These assembler directives are described below.
+В коде используются две новых ассемблерных директивы, описанных далее:
+`.byte` и `.align`.
 
-`.byte` Directive
+Директива `.byte`
 ^^^^^^^^^^^^^^^^^
 
-The byte sized arguments of `.byte` are assembled into consecutive
-bytes in memory. There are similar directives `.2byte` and `.4byte`
-for storing 16 bit values and 32 bit values, respectively. The general
-syntax is given below.
+Аргументы директивы `.byte` ассемблируются в последовательность байт в
+памяти. Также существуют аналогичные директивы `.2byte` и `.4byte`
+для ассемблирования 16- и 32-битных констант:
 
 ------
 .byte   exp1, exp2, ...
@@ -486,14 +495,12 @@ syntax is given below.
 .4byte  exp1, exp2, ...
 ------
 
-The arguments could be simple integer literal, represented as binary
-(prefixed by `0b` or `0B`), octal (prefixed by `0`), decimal or
-hexadecimal (prefixed by `0x` or `0X`). The integers could also be
-represented as character constants (character surrounded by single
-quotes), in which case the ASCII value of the character will be used.
+Аргументом может быть целый числовой литерал: двоичный с префиксом `0b`, 8-ричный
+префикс `0`, десятичный и hex `0x`. Также может использоваться строковая константа в
+одиночных кавычках, ассемблируемая в ASCII значения.
 
-The arguments could also be C expressions constructed out of literals
-and other symbols. Examples are shown below.
+Также аргументом может быть Си-выражение из литералов и других символов,
+примеры:
 
 ------
 pattern:  .byte 0b01010101, 0b00110011, 0b00001111
