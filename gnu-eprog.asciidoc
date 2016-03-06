@@ -628,23 +628,36 @@ image::flash-ram-mm.png[Memory Map]
 Миландровского 1986ВЕ9х "чернобыль").
 
 [[linker]]
-Linker
+Линкер
 ------
 
-While writing a multi-file program, each file is assembled individually
-into object files. The linker combines these object files to form the
-final executable.
+Линкер позволяет `скомпоновать` исполняемый файл программы
+из нескольких объектных файлов, поделив ее на части. Чаще всего это нужно при
+использовании нескольких компиляторов для разных языков программирования:
+ассемблер, компиляторы Си, C++, Фортрана и Паскакаля. 
 
-.Role of the Linker
-image::linker.png[Role of the Linker]
+Например, очень известная библиотека численных вычислений на базе матриц
+BLAS/LAPACK написана на Фортране, и для ее использования с сишной программой
+нужно слинковать program.o, blas.a и lapack.a (*) в один исполняемый файл.
 
-While combining the object files together, the linker performs the
-following operations.
+* `.a` -- файлы архивов из пары
+сотен отдельных .o файлов каждый, по одному .a файлу на каждый возможный вариант
+функции линейной алгебры
 
-  1. Symbol Resolution
-  2. Relocation
+При написании многофайловой программы (еще это называют `инкрементной
+компоновкой`) каждый файл исходного кода ассемблируется
+в индивидуальный файл объектного кода. Линкер (a.k.a компоновщик) собирает
+объектные файлы в финальный исполняемый бинарник.
 
-We will look into these operations, in detail, in this section.
+.Роль линкера
+image::linker.png[Роль линкера]
+
+При сборке объектных файлов, линкер выполняет следующие операции:
+
+  1. symbol resolution (разрешение символов)
+  2. relocation (релокация)
+
+В этой секции мы детально рассмотрим эти операции.
 
 Symbol Resolution
 ~~~~~~~~~~~~~~~~~
