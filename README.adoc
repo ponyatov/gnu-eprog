@@ -1,22 +1,26 @@
-= Embedded Programming using the GNU Toolchain
+= Программирование встраиваемых систем с использованием GNU Toolchain
 
-This is a short tutorial on using the GNU toolchain for bare metal
-programming. The tutorial uses Qemu to simulate an ARM board, and
-provides instructions to test programs within the simulated
-machine. The following topics will be covered.
+Это небольшая методичка по использованию комплекта компиляторов GNU toolchain
+для программирования "голого" железа. Этот учебник использует Qemu для симуляции
+отладочной платы на ARM-процессоре, и содержит инструкции по отладке программ на
+тестовом стенде-симуляторе. Описаны следующие темы:
 
-  * Writing assembly language programs
-  * Using make for build automation
-  * Writing linker scripts
-  * Writing C Startup code
-  * Using the C library
-  * Inline Assembler
+  * Написание программ на ассемблере ARM
+  * Использование make для автоматизации компиляции
+  * Напиание скриптов линкера
+  * Написание стартовго Си кода
+  * Использование библиотеки Си
+  * Использование inline-ассемблера
 
-The tutorial is written in asciidoc. The asciidoc source is converted
-to DocBook and then rendered to HTML.
+Этот учебник написан в формате asciidoc. Исходник на asciidoc конвертируется в
+DocBook и затем транслируется в HTML.
 
-The official rendered version of the is book is available from
+Официальная англоязычная версия в HTML доступна по адресу
 http://www.bravegnu.org/gnu-eprog/
 
+Репозиторий перевода на русский язык:
+https://github.com/ponyatov/gnu-eprog/tree/ru
 
+Online-просмотр перевода средствами GitHub:
+https://github.com/ponyatov/gnu-eprog/blob/ru/gnu-eprog.asciidoc
 
