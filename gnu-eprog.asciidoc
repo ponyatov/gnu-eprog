@@ -677,47 +677,71 @@ image::linker.png[Роль линкера]
 .`summain.s` - вызов процедуры
 [lang="armasm"]
 ------
-include::code/main.s[]
+        .text
+        b start                 @ пропустить данные
+arr:    .byte 10, 20, 25        @ константный массив байт
+eoa:                            @ адрес массива + 1
+        .align
+start:
+        ldr   r0, =arr          @ r0 = &arr
+        ldr   r1, =eoa          @ r1 = &eoa
+        bl    sum               @ вызвать процедуру
+stop:   b stop
 ------
 
 [[l2]]
 .`sumsub.s` - определение процедуры
 [lang="armasm"]
 ------
-include::code/sum-sub.s[]
+        @ аргументы
+        @ r0: стартовый адрес массива
+        @ r1: конечный адрес массива
+        @
+        @ возврат результата
+        @ r3: сумма массива
+
+        .global sum
+
+sum:    mov   r3, #0            @ r3 = 0
+loop:   ldrb  r2, [r0], #1      @ r2 = *r0++    ; получить элемент
+        add   r3, r2, r3        @ r3 += r2      ; суммировать
+        cmp   r0, r1            @ if (r0 != r1) ; проверить на конец массива
+        bne   loop              @    goto loop  ; цикл
+        mov   pc, lr            @ pc = lr       ; возврат результата
 ------
 
-A word on the `.global` directive is in order. In C, all variables
-declared outside functions are visible to other files, until
-explicitly stated as `static`. In assembly, all labels are `static`
-AKA local (to the file), until explicitly stated that they should be
-visible to other files, using the `.global` directive.
+Применение директивы `.global` обязательно. В Си все функции и переменные, 
+определенные вне функций, считаются видимыми из других объектных файлов, если
+они не определены с модификатором `static`. В ассемблере наоборот
+все метки считаются
+`статитическими` (или локальными на уровне файла), если с помощью директивы 
+`.global` специально не указано, что они должны быть видимы извне.
 
-The files are assembled, and the symbol tables are dumped using the
-`nm` command.
+Ассемблируйте файлы, и посмотрите дамп их таблицы символов используя 
+комунду `nm`:
 
 ------
-$ arm-none-eabi-as -o main.o main.s
-$ arm-none-eabi-as -o sum-sub.o sum-sub.s
-$ arm-none-eabi-nm main.o
+$ arm-none-eabi-as -o summain.o summain.s
+$ arm-none-eabi-as -o sumsub.o sumsub.s
+$ arm-none-eabi-nm summain.o
 00000004 t arr
 00000007 t eoa
 00000008 t start
 00000018 t stop
          U sum 
-$ arm-none-eabi-nm sum-sub.o
+$ arm-none-eabi-nm sumsub.o
 00000004 t loop
 00000000 T sum
 ------
 
-For now, focus on the letter in the second column, which specifies the
-symbol type.  A `t` indicates that the symbol is defined, in the text
-section. A `u` indicates that the symbol is undefined. A letter in
-uppercase indicates that the symbol is `.global`.
+Теперь сфокусируемся на букву во втором столюце, который указывает тип символа:
+'t' указывает что символ определен в секции кода .text, 'u' указывает что символ
+не определен. Буква в верхнем регистре указывает что символ глобальный и был 
+указан в директиве `.global`.
 
-It is evident that the symbol `sum` is defined in `sum-sub.o` and is
-not resolved yet in `main.o`. When the linker is invoked the symbol
-references will be resolved, and the executable will be produced. 
+Очевидно, что символ `sum` определ в `sumsub.o` и еще не рарзрешен в
+`summain.o`. Вызов линкера разрешает символьные ссылки, и создает исполняемый
+файл.
 
 Relocation
 ~~~~~~~~~~
