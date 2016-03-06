@@ -406,43 +406,38 @@ PSR=400001d3 -Z-- A svc32
 9. Особое значение для ARM имеет регистр `r15`: он является указателем команд, и
 содержит адрес текущей выполняемой машинной команды, т.е. `0x000c: b stop`.
 
-More Monitor Commands
-~~~~~~~~~~~~~~~~~~~~~
+Другие команды монитора
+~~~~~~~~~~~~~~~~~~~~~~~
 
-Some useful `qemu` monitor commands are listed in the following table.
+Несколько полезных команд монитора:
 
 [options="header"]
 |======
-| Command         | Purpose
-| `help`	  | List available commands
-| `quit`	  | Quits the emulator
-| `xp /fmt addr`  | Physical memory dump from `addr`
-| `system_reset`  | Reset the system.
+| Команда         | Назначение
+| `help`	  | список доступных команд
+| `quit`	  | выход из эмулятора
+| `xp /fmt addr`  | вывод содержимого физической памяти с адреса `addr`
+| `system_reset`  | перезапуск
 |======
 
-The `xp` command deserves more explanation. The `fmt` argument
-specifies how the memory contents is to be displayed. The syntax of
-`fmt` is `<count><format><size>`.
+Команда `xp` требует некоторых пояснений. Аргумент `/fmt` указывает
+как будет выводиться содержимое памяти, и имеет синтаксис
+`<счетчик><формат><размер>`:
 
-`count`::
-specifies no. of data items to be dumped.
+`счетчик`::
+число элементов данных
 
-`size`::
-specifies the size of each data item. `b` for 8 bits, `h` for 16 bits,
-`w` for 32 bits and `g` for 64 bits.
+`размер`::
+размер одного элемента в битах: `b=8` бит, `h=16`, `w=32`, `g=64`
 
-`format`::
-specifies the display format. `x` for hex, `d` for signed decimal, `u`
-for unsigned decimal, `o` for octal, `c` for char and `i` for
-asm instructions.
+`формат`::
+определяет формат вывода: `x` hex, `d` десятичные целые со знаком, `u`
+десятичные без знака, `o` 8ричные, `c` символ (char) и `i`
+инструкции ассемблера.
 
-This `xp` command with the `i` format, can be used to disassemble the
-instructions present in memory. To disassemble the instructions
-located at `0x0`, the `xp` command with the `fmt` specified as `4iw`
-can be used. The `4` specifies 4 items are to be displayed, `i`
-specifies that the items are to be printed as instructions (yes, a
-built in disassembler!), `w` specifies that the items are 32 bits in
-size. The output of the command is shown below.
+Команда `xp` в формате `i` будет дизассемблировать инструкции из
+памяти. Выведем дамп с адреса `0x0` указав `fmt=4iw`: 4 -- четыре , i --
+инструкции размером `w` -- 32 бита:
 
 ------
 (qemu) xp /4iw 0x0
