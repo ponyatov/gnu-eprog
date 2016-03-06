@@ -41,14 +41,15 @@
 описано в приложении.
 
 [[arm-lab]]
-Setting up the ARM Lab
-----------------------
+Настройка тестового стенда
+--------------------------
 
-This section shows how to setup a simple ARM development and testing
-environment in your PC, using Qemu and the GNU toolchain. Qemu is a
-machine emulator capable of emulating various machines including ARM
-based machines. You can write ARM assembly programs, compile them
-using the GNU toolchain and execute and test them in Qemu.
+В этом разделе описано, как настроить на вашей рабочей станции простую среду
+разработки и тестирования ПО для платформы ARM, используя Qemu и GNU toolchain.
+Qemu это программный (для i386 -- программно-аппаратный, использует
+средства виртуализации хост-компьютера) эмулятор нескольких распространенных
+аппаратных платформ. Вы можете написать программу на ассемблере и Си,
+скомпилировать ее используя GNU toolchain и отладить ее в эмуляторе Qemu.
 
 Qemu ARM
 ~~~~~~~~
