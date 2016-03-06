@@ -328,64 +328,70 @@ ponyatov@bs:/tmp$
 процессора, получить полный список сочетаний -b/-m можно командной
 `arm-none-eabi-objdump -i`.
 
-Executing in Qemu
+Выполнение в Qemu
 ~~~~~~~~~~~~~~~~~
 
-When the ARM processor is reset, it starts executing from address
-`0x0`. On the connex board a 16MB Flash is located at address
-`0x0`. The instructions present in the beginning of the Flash will be
-executed.
+Когда ARM-процессор сбрасывается, он начинает выполнять команды с адреса `0x0`.
+На плате connex установлен флеш на 16 мегабайт, начинающийся с адреса `0x0`. Таким
+образом, при сбросе будут выполняться инструкции с начала флеша.
 
-When `qemu` emulates the connex board, a file has to be specified
-which will be treated file as Flash memory. The Flash file format is
-very simple. To get the byte from address X in the Flash, `qemu` reads
-the byte from offset X in the file. In fact, this is the same as the
-binary file format.
+Когда `qemu` эмулирует плату connex, в командной строке должен быть указан
+файл,
+который будет считаться образом флеш-памяти. Формат флеша очень прост -- это
+побайтный образ флеша без каких-либо полей или заголовков, т.е. это тот же самый
+\term{бинарный формат}, описанный выше.
 
-To test the program, on the emulated Gumstix connex board, we first
-create a 16MB file representing the Flash. We use the `dd` command to
-copy 16MB of zeroes from `/dev/zero` to the file `flash.bin`. The data
-is copied in 4K blocks.
-
-------
-$ dd if=/dev/zero of=flash.bin bs=4096 count=4096
-------
-
-`add.bin` file is then copied into the beginning of the Flash, using
-the following command.
+Для тестирования программы в эмуляторе Gumstix connex, сначала мы создаем
+16-мегабайтный файл флеша, копируя 16М нулей из файла `/dev/zero` с
+помощью команды `dd`. Данные копируются 4Кбайтными блоками (опция `bs=
+(blocksize)`: 4096 х 4К :
 
 ------
-$ dd if=add.bin of=flash.bin bs=4096 conv=notrunc
+$ dd if=/dev/zero of=flash.bin bs=4K count=4096
+4096+0 записей получено
+4096+0 записей отправлено
+ скопировано 16777216 байт (17 MB), 0,0153502 c, 1,1 GB/c
+
+$ du -h flash.bin 
+16M     flash.bin
 ------
 
-This is the equivalent of programming the `bin` file on to the Flash
-memory.
+Затем переписываем начало `flash.bin` копируя в него содержимое
+`add.bin`:
 
-After reset, the processor will start executing from address `0x0`,
-and the instructions from the program will get executed. The command
-to invoke `qemu` is given below.
+------
+$ dd if=add.bin of=flash.bin bs=4K conv=notrunc
+0+1 записей получено
+0+1 записей отправлено
+ скопировано 16 байт (16 B), 0,000173038 c, 92,5 kB/c
+------
+
+После сброса процессор выполняет код с адреса `0x0`, и будут выполняться
+инструкции нашей программы. Команда запуска `qemu`:
 
 ------
 $ qemu-system-arm -M connex -pflash flash.bin -nographic -serial /dev/null
+
+QEMU 2.1.2 monitor - type 'help' for more information
+(qemu) 
 ------
 
-The `-M connex` option specifies that the machine `connex` is to be
-emulated. The `-pflash` options specifies that `flash.bin` file
-represents the Flash memory. The `-nographic` specifies that
-simulation of a graphical display is not required. The `-serial
-/dev/null` specifies that the serial port of the connex board is to be
-connected to `/dev/null`, so that the serial port data is discarded.
+Опция `-M connex` выбирает режим эмуляции: Qemu поддерживает эмуляцию
+нескольких десятков вариантов железа на базе ARM процессоров. Опция `-pflash`
+указывает файл образа флеша, который должен иметь определенный размер (16М).
+`-nographic` отключает эмуляцию графического дисплея (в отдельном окне).
+Самая важная опция `-serial /dev/null` подключает последовательный порт
+платы на `/dev/null`, при этом в терминале после запуска Qemu вы получите
+`консоль монитора`.
 
-The system executes the instructions and after completion, keeps
-looping infinitely in the `stop: b stop` instruction. To view the
-contents of the registers, the monitor interface of `qemu` can be
-used. The monitor interface is a command line interface, through which
-the emulated system can be controlled and the status of the system can
-be viewed. When `qemu` is started with the above mentioned command,
-the monitor interface is provided in the standard I/O of `qemu`.
+Qemu выполняет инструкции, и останавливается в бесконечном цикле на
+`stop`, выполняя команду `stop: b stop`. Для просмотра содержимого
+регистров процессора воспользуемся`монитором` Qemu.
+Монитор имеет интерфейс командной строки, который вы можете использовать для
+контроля работы эмулируемой системы. Если вы запустите `qemu` как указано выше,
+монитор будет доступен через stdio.
 
-To view the contents of the registers the `info registers` monitor
-command can be used.
+Для просмотра регистров выполним команду `info registers`:
 
 ------
 (qemu) info registers
@@ -396,8 +402,9 @@ R12=00000000 R13=00000000 R14=00000000 R15=0000000c
 PSR=400001d3 -Z-- A svc32
 ------
 
-Note the value in register `R02`. The register contains the result of
-the addition and should match with the expected value of 9.
+Обратите внимание на значения в регистрах `r00`..`r02`: 4, 5 и ожидаемый результат
+9. Особое значение для ARM имеет регистр `r15`: он является указателем команд, и
+содержит адрес текущей выполняемой машинной команды, т.е. `0x000c: b stop`.
 
 More Monitor Commands
 ~~~~~~~~~~~~~~~~~~~~~
