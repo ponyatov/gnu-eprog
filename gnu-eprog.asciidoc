@@ -561,14 +561,28 @@ stop:   b stop
 Директива `.ascii` аналогична `.asciz`, но конец строки не
 добавляется. Все символы -- 8-битные, кириллица может не поддерживаться.
 
-`.equ` Directive
+Директива `.equ`
 ^^^^^^^^^^^^^^^^
 
-The assembler maintains something called a symbol table. The symbol
-table maps label names to addresses. Whenever the assembler encounters
-a label definition, the assembler makes an entry in the symbol
-table. And whenever the assembler encounters a label reference, it
-replaces the label by the corresponding address from the symbol table.
+Ассемблер при свой работе использует `таблицу символов`: она хранит 
+соответствия меток и их адресов. Когда ассемблер встречает
+очередное определение метки, он добавляет в таблицу новую запись. Когда
+встречается упоминание метки, оно заменяется соответствующим адресом из
+таблицы.
+
+* на самом деле ассемблер пишет таблицу символов в объектный файл, а
+замену на адреса делает линкер, когда линкует несколько объектных файлов в один
+.elf, но это ненужные пока детали, описанные далее
+
+Использование директивы `.equ` позволяет добавлять записи в
+таблицу символов вручную, для привязки к именам любых числовых значений, не
+обязательно адресов. Когда ассемблер встречает эти имена, они заменяются на их
+значения. Эти имена-константы, и имена меток, называются
+`сиволами`, а таблицы записанные в объектные файлы, или в
+отдельные `.sym` файлы -- `таблицами символов` (*)
+
+* также используются отладчиком, чтобы показывать адреса переходов
+в виде понятных программисту сиволов, а не мутных числовых констант
 
 Using the assembler directive `.equ`, it is also possible to manually
 insert entries in the symbol table, to map names to values, which are
@@ -576,19 +590,18 @@ not necessarily addresses. Whenever the assembler encounters these
 names, it replaces them by their corresponding values. These names and
 label names are together called symbol names.
 
-The general syntax of the directive is given below.
+Синтаксис директивы .equ:
 
 ------
-.equ name, expression
+.equ <имя>, <выражение>
 ------
 
-The `name` is a symbol name, and has the same restrictions as that of
-the label name. The `expression` could be simple literal, or an
-expression as explained for the `.byte` directive.
+`Имя` символа имеет те же ограничения по используемым символам, что и метка.
+`Выражение` может быть одиночным литералом или выражением как и в директиве
+`.byte`.
 
-NOTE: Unlike the `.byte` directive, the `.equ` directive itself does
-not allocate any memory. They just create entries in the symbol
-table. 
+NOTE: В отличие от `.byte`, директива `.equ` не выделяет никакой памяти под аргумент.
+Она только добавляет значение в таблицу символов.  
 
 [[using-ram]]
 Using RAM
