@@ -510,15 +510,16 @@ dummy:    .4byte 0xDEADBEEF
 nalpha:   .byte 'Z' - 'A' + 1
 ------
 
-`.align` Directive
+Директива `.align`
 ^^^^^^^^^^^^^^^^^^
 
-ARM requires that the instructions be present in 32-bit aligned memory
-locations. The address of the first byte, of the 4 bytes in an
-instruction, should be a multiple of 4. To adhere to this, the
-`.align` directive can be used to insert padding bytes till the next
-byte address will be a multiple of 4. This is required only when data
-bytes or half words are inserted within code.
+Архитектура ARM требует чтобы инструкции находились в адресах памяти,
+выровненных по границам 32-битного слова, т.е. в адресах с нулями в 2х младших
+разрядах. Другими словами, адрес каждого первого байта из 4-байтной команды,
+должен быть кратен 4. Для обеспечения этого предназначена директива
+`.align`, которая вставляет выравнивающие байты до следующего `выровненного
+адреса`. Ее нужно использовать только если в код вставляются байты или неполные
+32-битные слова.
 
 String Length
 ~~~~~~~~~~~~~
