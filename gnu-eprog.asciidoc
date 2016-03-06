@@ -743,39 +743,35 @@ $ arm-none-eabi-nm sumsub.o
 `summain.o`. Вызов линкера разрешает символьные ссылки, и создает исполняемый
 файл.
 
-Relocation
-~~~~~~~~~~
+Релокация
+~~~~~~~~~
 
-Relocation is the process of changing addresses already assigned to
-labels. This will also involve patching up all label references to
-reflect the newly assigned address. Primarily, relocation is performed
-for the following two reasons:
+`Релокация` -- процесс изменения уже назначенных меткам адресов. Он также
+выполняет коррекцию всех ссылок, чтобы отразить заново назначенные
+адреса меток. В общем, релокация выполняется по двум основным причинам:
 
-  1. Section Merging
-  2. Section Placement
+  1. Объединение секций
+  2. Размещение секций
 
-To understand the process of relocation, an understanding of the
-concept of sections is essential. 
+Для понимания процеса релокации, нужно понимание самой концепции секций.
 
-Code and data have different run time requirements. For example code
-can be placed in read-only memory, and data might require read-write
-memory. It would be convenient, if code and data is *not*
-interleaved. For this purpose, programs are divided into
-sections. Most programs have at least two sections, `.text` for code
-and `.data` for data. Assembler directives `.text` and `.data`, are
-used to switch back and forth between the two sections.
+Код и данные отличаются по требованиям при исполнении. Например код может
+размещаться в ROM-памяти, а данные требуют память открытую на запись. Очень
+хорошо, если области кода и данных `не пересекаются`. Для этого программы 
+делятся на секции. Большиство программ имеют как минимум две секции: `.text`
+для кода и `.data` для данных. Ассемблерные директивы `.text` и `.data` ожидаемо
+используются для переключения между этими секциями.
 
-It helps to imagine each section as a bucket. When the assembler hits
-a section directive, it puts the code/data following the directive in
-the selected bucket. Thus the code/data that belong to particular
-section appear in contiguous locations. The following figures show
-how the assembler re-arranges data into sections.
+Хорошо представить каждую секцию как ведро. Когда ассемблер натыкается на 
+директиву секции, он начинает сливать код/данные в соответствующее ведро, так 
+что они размещаются в смежных адресах. Эта диаграмма показывает как ассемблер
+упорядочивает данные в секциях:
 
-.Sections
-image::sections.png[Sections]
+.Секции
+image::sections.png[Секции]
 
-Now that we have an understanding of sections, let us look into the
-primary reasons for which relocation is performed.
+Теперь, когда у нас есть общее понимаение `секционирования` кода и данных,
+давайте посмотрим по каким причинам выполняется релокация.
 
 Section Merging
 ^^^^^^^^^^^^^^^
