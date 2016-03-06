@@ -178,6 +178,57 @@ GNU Toolchain будут использоваться без префикса д
 забывайте добавлять `arm-none-eabi-`, иначе получите множество странных
 ошибок типа "unexpected command".
 
+------
+$ (arm-none-eabi-)as -o add.o add.s
+$ (arm-none-eabi-)objdump -x add.o
+------
+
+.вывод команды `arm-none-eabi-objdump\ -x`: ELF-заголовки в файле объектного кода
+------
+add.o:     file format elf32-littlearm
+add.o
+architecture: armv4, flags 0x00000010:
+HAS_SYMS
+start address 0x00000000
+private flags = 5000000: [Version5 EABI]
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000010  00000000  00000000  00000034  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00000000  00000000  00000044  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          00000000  00000000  00000000  00000044  2**0
+                  ALLOC
+  3 .ARM.attributes 00000014  00000000  00000000  00000044  2**0
+                  CONTENTS, READONLY
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l       .text	00000000 start
+0000000c l       .text	00000000 stop
+00000000 l    d  .ARM.attributes	00000000 .ARM.attributes
+------
+
+Секция `.text` имеет размер `Size=0x0010` =16 байт, и содержит
+`машинный код`:
+
+.машинный код из секции .text: `objdump -d`
+------
+add.o:     file format elf32-littlearm
+
+Disassembly of section .text:
+
+00000000 <start>:
+   0:	e3a00005 	mov	r0, #5
+   4:	e3a01004 	mov	r1, #4
+   8:	e0812000 	add	r2, r1, r0
+
+0000000c <stop>:
+   c:	eafffffe 	b	c <stop>
+------
+
 Для генерации `исполняемого файла` (обычно тот же формат ELF.o,
 слепленный из одного или нескольких объектных файлов, с некоторыми
 модификациями см. опцию -T далее) вызовем линкер `ld`:
@@ -225,14 +276,14 @@ $ arm-none-eabi-nm add.elf
 машинного кода, если вы запускаете его в базовой ОС (прежде всего
 "большой" или встраиваемый Linux), но поскольку мы собираемся запускать нашу
 программу на bare metal (голом железе), мы должны сконвертировать полученный
-.elf файл в более простой `бинарный формат`}.
+.elf файл в более простой `бинарный формат`.
 
 Файл в `бинарном` формате содержит последовательность байт, начинающуюся с
-определенного адреса памяти, иногда его называют `образом памяти`. Этот
+определенного адреса памяти, поэтому бинарный файл еще называют `образом памяти`. Этот
 формат типичен для утилит программирования флеш-памяти микроконтроллеров, так
 как все что требуется сделать -- последовательно скопировать каждый байт из
 файла в FlashROM-память микроконтроллера, начиная с определенного начального
-адреса в памяти. Та же операция выполняется и для SoC-систем с NAND-флешем:
+адреса. Та же операция выполняется и для SoC-систем с NAND-флешем:
 записать бинарный образ начиная с некоторого аппаратно фиксированного адреса.
 
 Команда GNU toolchain `objcopy` используется для конвертирования машинного кода
@@ -255,6 +306,26 @@ $ arm-none-eabi-objcopy -O binary add.elf add.bin
 $ ls -al add.bin
 -rw-r--r-- 1 vijaykumar vijaykumar 16 2008-10-03 23:56 add.bin
 ------
+
+Если вы не доверяете ls, можно `дизассемблировать бинарный файл`:
+
+\begin{verbatim}
+ponyatov@bs:/tmp$ arm-none-eabi-objdump -b binary -m arm -D add.bin
+
+add.bin:     file format binary
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:   e3a00005        mov     r0, #5
+   4:   e3a01004        mov     r1, #4
+   8:   e0812000        add     r2, r1, r0
+   c:   eafffffe        b       0xc
+ponyatov@bs:/tmp$ 
+\end{verbatim}
+Опция \verb|-b|\ задает формат файла, опция \verb|-m|\ (machine) архитектуру
+процессора, получить полный список сочетаний \verb|-b/-m|\ можно командной
+\verb|arm-none-eabi-objdump -i|.
 
 Executing in Qemu
 ~~~~~~~~~~~~~~~~~
