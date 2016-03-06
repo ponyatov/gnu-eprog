@@ -74,15 +74,25 @@ Qemu версии не ниже 0.9.1.
 $ apt-get install qemu
 ------
 
-Installing GNU Toolchain for ARM
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Установка кросс-компилятора GNU Toolchain для ARM
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  1. Folks at CodeSourcery (part of Mentor Graphics) have been kind enough to make GNU
-     toolchains available for various architectures. Download the GNU
-     toolchain for ARM, available from from
+Если вы предпочитаете простые пути, установите пакет кросс-компилятора командной
+
+------
+sudo apt install gcc-arm-none-eabi
+------
+
+или
+
+
+
+  1. Годные чуваки из CodeSourcery (подразделение Mentor Graphics)
+уже давно запилили несколько вариантов GNU Toolchainов для разных ходовых
+  архитектур. Скачайте готовую бинарную бесплатную lite-сборку
      http://www.mentor.com/embedded-software/sourcery-tools/sourcery-codebench/editions/lite-edition/
 +
-  2. Extract the tar archive, to `~/toolchains`.
+  2. Распакуйте tar-архив в каталог `~/toolchains`.
 +
 ------
 $ mkdir ~/toolchains
@@ -90,13 +100,14 @@ $ cd ~/toolchains
 $ tar -jxf ~/downloads/arm-2008q1-126-arm-none-eabi-i686-pc-linux-gnu.tar.bz2 
 ------
 +
-  3. Add the toolchain to your `PATH`.
+  3. Добавьте bin-каталог тулчейна в переменную среды `PATH`.
 +
 ------
 $ PATH=$HOME/toolchains/arm-2008q1/bin:$PATH
 ------
 +
-  4. You might want to add the previous line to your `.bashrc`.
+  4. Чтобы каждый раз не выполнять предыдущую команду, вы можете прописать
+ее в дот-файл `.bashrc`.
 
 [[hello-arm]]
 Hello ARM
