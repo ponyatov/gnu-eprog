@@ -157,35 +157,39 @@ stop:	b stop               @ пустой бесконечный цикл для
 быть ассемблирован в секцию кода .text, а не в секцию
 `.data`. Секции будут подробно описаны далее.
 
-Building the Binary
-~~~~~~~~~~~~~~~~~~~
+Сборка бинарника
+~~~~~~~~~~~~~~~~
 
-Save the program in a file say `add.s`. To assemble the file, invoke
-the GNU Toolchain's assembler `as`, as shown in the following command.
+Сохраните программу в файл `add.s` ( `.s` или `.S` стандарное расширение в
+мире OpenSource, указывает что это файл с программной на ассемблере).
+Для ассемблирования файла вызовите ассемблер `as`:
 
 ------
 $ arm-none-eabi-as -o add.o add.s
 ------
 
-The `-o` option specifies the output filename. 
+Опция `-o` указывает выходной файл с `объектным кодом`, имеющий стандартное 
+расширение `.o` (и внутренний формат ELF (как завещал великий Linux)).
 
-NOTE: Cross toolchains are always prefixed with the target
-architecture for which they are built, to avoid name conflicts with
-the host toolchain. For the sake readability, tools will be referred
-to without the prefix, in the text.
+NOTE: Команды кросс-тулчейна всегда имеют префикс целевой архитектуры
+(target triplet), для которой они были собраны, чтобы предотвратить
+конфликт имен с хост-тулчейном для вашего рабочего компьютера. Далее утилиты
+GNU Toolchain будут использоваться без префикса для лучшей читаемости. Не
+забывайте добавлять `arm-none-eabi-`, иначе получите множество странных
+ошибок типа "unexpected command".
 
-To generate the executable file, invoke the GNU Toolchain's linker
-`ld`, as shown in the following command.
+Для генерации `исполняемого файла` (обычно тот же формат ELF.o,
+слепленный из одного или нескольких объектных файлов, с некоторыми
+модификациями см. опцию -T далее) вызовем линкер `ld`:
 
 ------
 $ arm-none-eabi-ld -Ttext=0x0 -o add.elf add.o
 ------
 
-Here again, the `-o` option specifies the output filename. The
-`-Ttext=0x0`, specifies that addresses should be assigned to the
-labels, such that the instructions were starting from address
-`0x0`. To view the address assignment for various labels, the `nm`
-command can be used as shown below.
+Опять, опция `-o` задает выходной файл. `-Ttext=0x0` явно указывает
+адрес, от которого будут отсчитываться все метки, т.е. секция инструкций
+начинается с адреса `0x0000`. Для просмотра адресов, назначенных меткам,
+можно использовать команду `(arm-none-eabi-)nm` (NaMes):
 
 ------
 $ arm-none-eabi-nm add.elf
@@ -194,14 +198,17 @@ $ arm-none-eabi-nm add.elf
 0000000c t stop
 ------
 
-Note the address assignment for the labels `start` and `stop`. The
-address assigned for `start` is `0x0`. Since it is the label of the
-first instruction. The label `stop` is after 3 instructions. Each
-instructions is 4 bytes. Hence `stop` is assigned an address `12`
-(`0xC`).
+Обратите внимание на назначение адресов для меток
+`start` и `stop`: адреса начанаются с `0x0`. Это адрес первой инструкции.
+`stop` находится после третьей инструкции. Каждая инструкция занимает
+4 байта (*), так что `stop` находится по адресу `0xC`.
 
-Linking with a different base address for the instructions will result
-in a different set of addresses being assigned to the labels.
+* в множестве команд ARM-32, если вы компилируете код для
+микроконтроллера Cortex-M в режиме команд Thumb или Thumb2, команды 16-битные, т.е.
+2 байта
+
+Линковка с другим базовым адресом `-Ttext=nnnn` приведет к сдвигу адресов, 
+назначенных меткам.
 
 ------
 $ arm-none-eabi-ld -Ttext=0x20000000 -o add.elf add.o
@@ -211,35 +218,38 @@ $ arm-none-eabi-nm add.elf
 2000000c t stop
 ------
 
-The output file created by `ld` is in a format called `ELF`. Various
-file formats are available for storing executable code. The ELF format
-works fine when you have an OS around, but since we are going to run
-the program on bare metal, we will have to convert it to a simpler
-file format called the `binary` format.
+Выходной файл, созданный `ld` имеет формат, который называется
+`ELF`. Существует множество форматов, предназначенных для хранения
+выполняемого и объектного кода (можно отдельно отметить Microsoft COFF
+(объектные файлы .obj) и PE (.exe)cutable ). Формат ELF применяется для хранения
+машинного кода, если вы запускаете его в базовой ОС (прежде всего
+"большой" или встраиваемый Linux), но поскольку мы собираемся запускать нашу
+программу на bare metal (голом железе), мы должны сконвертировать полученный
+.elf файл в более простой `бинарный формат`}.
 
-A file in `binary` format contains consecutive bytes from a specific
-memory address. No other additional information is stored in the
-file. This is convenient for Flash programming tools, since all that
-has to be done when programming is to copy each byte in the file, to
-consecutive address starting from a specified base address in memory.
+Файл в `бинарном` формате содержит последовательность байт, начинающуюся с
+определенного адреса памяти, иногда его называют `образом памяти`. Этот
+формат типичен для утилит программирования флеш-памяти микроконтроллеров, так
+как все что требуется сделать -- последовательно скопировать каждый байт из
+файла в FlashROM-память микроконтроллера, начиная с определенного начального
+адреса в памяти. Та же операция выполняется и для SoC-систем с NAND-флешем:
+записать бинарный образ начиная с некоторого аппаратно фиксированного адреса.
 
-The GNU toolchain's `objcopy` command can be used to convert between
-different object file formats. A common usage of the command is given
-below.
+Команда GNU toolchain `objcopy` используется для конвертирования машинного кода
+между разными объектными форматами. Типичное использование:
 
 ------
 objcopy -O <output-format> <in-file> <out-file>
 ------
 
-To convert `add.elf` to binary format the following command can be
-used.
+Конвертируем `add.elf` в бинарный формат:
 
 ------
 $ arm-none-eabi-objcopy -O binary add.elf add.bin
 ------
 
-Check the size of the file. The file will be exactly 16 bytes. Since
-there are 4 instructions and each instruction occupies 4 bytes.
+Проверим размер полученного бинарного файла, он должен быть равен тем же 16
+байтам: 4 инструкции по 4 байта каждая}:
 
 ------
 $ ls -al add.bin
