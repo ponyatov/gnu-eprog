@@ -183,7 +183,7 @@ $ (arm-none-eabi-)as -o add.o add.s
 $ (arm-none-eabi-)objdump -x add.o
 ------
 
-.вывод команды `arm-none-eabi-objdump\ -x`: ELF-заголовки в файле объектного кода
+.вывод команды `arm-none-eabi-objdump -x`: ELF-заголовки в файле объектного кода
 ------
 add.o:     file format elf32-littlearm
 add.o
@@ -309,8 +309,8 @@ $ ls -al add.bin
 
 Если вы не доверяете ls, можно `дизассемблировать бинарный файл`:
 
-\begin{verbatim}
-ponyatov@bs:/tmp$ arm-none-eabi-objdump -b binary -m arm -D add.bin
+------
+$ arm-none-eabi-objdump -b binary -m arm -D add.bin
 
 add.bin:     file format binary
 
@@ -322,10 +322,11 @@ Disassembly of section .data:
    8:   e0812000        add     r2, r1, r0
    c:   eafffffe        b       0xc
 ponyatov@bs:/tmp$ 
-\end{verbatim}
-Опция \verb|-b|\ задает формат файла, опция \verb|-m|\ (machine) архитектуру
-процессора, получить полный список сочетаний \verb|-b/-m|\ можно командной
-\verb|arm-none-eabi-objdump -i|.
+------
+
+Опция `-b` задает формат файла, опция `-m` (machine) архитектуру
+процессора, получить полный список сочетаний -b/-m можно командной
+`arm-none-eabi-objdump -i`.
 
 Executing in Qemu
 ~~~~~~~~~~~~~~~~~
