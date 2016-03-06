@@ -551,17 +551,15 @@ stop:   b stop
 
 Код иллюстрирует применение директив `.asciz` и `.equ`.
 
-`.asciz` Directive
+Директива `.asciz`
 ^^^^^^^^^^^^^^^^^^
+Директива `.asciz` принимает аргумент: строковый литерал,
+последовательность символов в двойных кавычках. Строковые литералы
+ассемблируются в память последовательно, добавляя в конец нулевой символ
+`\0` (признак конца строки в языке Си и стандарте POSIX).
 
-The `.asciz` directive accepts string literals as arguments. String
-literal are a sequence characters in double quotes. The string
-literals are assembled into consecutive memory locations. The
-assembler automatically inserts a `nul` character ('\0' character)
-after each string.
-
-The `.ascii` directive is same as `.asciz`, but the assembler does not
-insert a `nul` character after each string.
+Директива `.ascii` аналогична `.asciz`, но конец строки не
+добавляется. Все символы -- 8-битные, кириллица может не поддерживаться.
 
 `.equ` Directive
 ^^^^^^^^^^^^^^^^
