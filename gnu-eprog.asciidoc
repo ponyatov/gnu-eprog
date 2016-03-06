@@ -1437,7 +1437,7 @@ FIXME: This section is yet to be written.
 
 [[make]]
 Using `make` for build automation
--------------------------------
+---------------------------------
 
 If you bothered with set of long commands you enter every time compiling
 samples in this tutorial, that's time to use `make` tool. 
