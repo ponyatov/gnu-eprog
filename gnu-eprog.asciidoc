@@ -806,29 +806,24 @@ $ arm-none-eabi-nm sum.elf
 00000024 T sum
 ------
 
-<1> символ `loop` имеет адрес `0x4` в `sumsub.o`, и `0x28` в
-`sum.elf`, так как секция `.text` из `sumsub.o` размещен сразу за
-секцией `.text` из `summain.o`.
+<1> символ `loop` имеет адрес `0x4` в `sumsub.o`, и `0x28` в `sum.elf`, так как
+секция `.text` из `sumsub.o` размещена сразу за секцией `.text` из `summain.o`.
 
-Section Placement
+Размещение секций
 ^^^^^^^^^^^^^^^^^
 
-When a program is assembled, each section is assumed to start from
-address 0. And thus labels are assigned values relative to start of
-the section. When the final executable is created, the section is
-placed at some address X. And all references to the labels defined
-within the section, are incremented by X, so that they point to the
-new location.
+Когда программа ассемблируется, каждой секции назначается стартовый адрес `0x0`.
+Поэтому всем переменным назначаются адреса относитально начала секции. Когда
+создается финальный исполнямый файл, секция размещаются по некоторому адресу
+`X`, и все адреса меток, назначенные в секции, увеличиваются на X, так что они
+указывают на новые адреса.
 
-The placement of each section at a particular location in memory and
-the patching of all references to the labels in the section, is done
-by the linker.
+Размещение каждой секции по определенному месту в памяти и коррекцию всех ссылок
+на метки в секции, выполняет линкер.
 
-The effects of section placement can be seen by looking at the symbol
-table of the object file and the corresponding executable file. The
-single file sum of array program can be used to illustrate section
-placement. To make things clearer, we will place the `.text` section
-at address `0x100`.
+Эффект размещения секций можно увидеть по тому же дампу символов, описанному выше.
+Для простоы используем объектный файл однофайловой программы суммирования `sum.o`.
+Для увеличения заметности искуственно размести секцию `.text` по адресу `0x100`:
 
 ------
 $ arm-none-eabi-as -o sum.o sum.s
@@ -850,21 +845,18 @@ $ arm-none-eabi-nm -n sum.elf
 ...
 ------
 
-<1> The address for labels are assigned starting from `0` within a
-section. 
+<1> Адреса меток назначаются с `0` от начала секции.
 
-<2> When the executable is created the linker is instructed to place
-the text section at address `0x100`.
+<2> Когда создается выполняемый файл, линкеру указано разместить секцию кода с 
+адреса `0x100`.
 
-<3> The address for labels in the `.text` section are re-assigned
-starting from `0x100`, and all label references will be patched to
-reflect this.
+<3> Адреса меток в `.text` переназначаются начиная с `0x100`, и все ссылки на
+метки корректируются.
 
-The process of section merging and placement is shown in the following
-figure.
+Процесс объединения и размещения секций в общем показаны на диаграмме:
 
-.Section Merging and Placement
-image::relocation.png[Section Merging and Placement]
+.Объединение и размещение секций
+image::relocation.png[Объединение и размещение секций]
 
 [[lds]]
 Linker Script File
