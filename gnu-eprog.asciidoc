@@ -773,33 +773,29 @@ image::sections.png[Секции]
 Теперь, когда у нас есть общее понимаение `секционирования` кода и данных,
 давайте посмотрим по каким причинам выполняется релокация.
 
-Section Merging
-^^^^^^^^^^^^^^^
+Объединение секций
+^^^^^^^^^^^^^^^^^^
 
-When dealing with multi-file programs, the sections with the same name
-(example `.text`) might appear, in each file. The linker is
-responsible for merging sections from the input files, into sections
-of the output file. By default, the sections, with the same name, from
-each file is placed contiguously and the label references are patched
-to reflect the new address.
+Когда вы имеете дело с многофайловыми программами, секции в каждом объектном 
+файле имеют одинаковые имена (`.text`,..). Линкер отвечает за их объединение 
+в выполняемом файле. По умолчанию, секции с одинаковыми именами из каждого .o
+файла объединяются последовательно, и метки корректируются на новые адреса.
 
-The effects of section merging can be seen by looking at the symbol
-table of the object files and the corresponding executable file. The
-multi-file sum of array program can be used to illustrate section
-merging. The symbol table of the object files `main.o` and `sum-sub.o`
-and the symbol table of the executable file `sum.elf` is shown below.
+Эффекты объединения секций можно посмотреть, анализируя таблицы символов
+отдельно в объектных и исполняемом файлах. Многофайловая программа суммирования
+может иллюстрировать объединение секций. Дампы таблиц символов:
 
 ------
-$ arm-none-eabi-nm main.o
+$ arm-none-eabi-nm summain.o
 00000004 t arr
 00000007 t eoa
 00000008 t start
 00000018 t stop
          U sum 
-$ arm-none-eabi-nm sum-sub.o
+$ arm-none-eabi-nm sumsub.o
 00000004 t loop <1>
 00000000 T sum
-$ arm-none-eabi-ld -Ttext=0x0 -o sum.elf main.o sum-sub.o
+$ arm-none-eabi-ld -Ttext=0x0 -o sum.elf summain.o sumsub.o
 $ arm-none-eabi-nm sum.elf
 ...
 00000004 t arr
@@ -810,9 +806,9 @@ $ arm-none-eabi-nm sum.elf
 00000024 T sum
 ------
 
-<1> The `loop` symbol has address `0x4` in `sum-sub.o`, and `0x28` in
-`sum.elf`, since the `.text` section of `sum-sub.o` is placed right
-after the `.text` section of `main.o`.
+<1> символ `loop` имеет адрес `0x4` в `sumsub.o`, и `0x28` в
+`sum.elf`, так как секция `.text` из `sumsub.o` размещен сразу за
+секцией `.text` из `summain.o`.
 
 Section Placement
 ^^^^^^^^^^^^^^^^^
