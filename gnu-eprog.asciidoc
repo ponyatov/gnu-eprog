@@ -1,5 +1,5 @@
-Embedded Programming with the GNU Toolchain
-===========================================
+Программирование встраиваемых систем с использованием GNU Toolchain
+===================================================================
 :Author:          Vijay Kumar B.
 :Email:           vijaykumar@bravegnu.org
 :Author Initials: BVK
@@ -8,20 +8,18 @@ Embedded Programming with the GNU Toolchain
 :Revision history:
 
 [[intro]]
-Introduction
-------------
+Введение
+--------
 
-The GNU toolchain is increasingly being used for deeply embedded
-software development. This type of software development is also called
-standalone C programming and bare metal C programming. Standalone C
-programming brings along with it new problems, and dealing with them
-requires a deeper understanding of the GNU toolchain. The GNU
-toolchain's manuals provide excellent information on the toolchain,
-but from the perspective of the toolchain, rather than the perspective
-of the problem. Well, that is how manuals are supposed to be written
-anyway. The result is that the answers to common problems are
-scattered all over, and new users of the GNU toolchain are left
-baffled.
+GNU toolchain широко используется при разработке программного обеспечения для
+встраиваемых систем. Этот тип разработки ПО также называют
+`низкоуровневым`, `standalone` или `bare metal` программированием (на Си и C++).
+Написание низкоуровневого кода на Си добавляет программисту новых проблем,
+требующих глубокого понимания инструмента разработчика -- GNU Toolchain.
+Руководства разработчика GNU Toolchain предоставляют отличную информацию по
+инструментарию, но с точки зрения самого GNU Toolchain, чем с точки зрения 
+решаемой проблемы. Поэтому было написано это руководство, в котором будут
+описаны типичные проблемы, с которыми сталкивается начинающий разработчик.
 
 This tutorial attempts to bridge the gap by explaining the tools from
 the perspective of the problem. Hopefully, this should enable more
