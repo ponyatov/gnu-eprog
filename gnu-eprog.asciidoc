@@ -824,15 +824,14 @@ $ arm-none-eabi-nm -n sum.elf
 image::relocation.png[Объединение и размещение секций]
 
 [[lds]]
-Linker Script File
-------------------
+Скрипт линкера
+--------------
 
-As mentioned in the previous section, section merging and placement is
-done by the linker. The programmer can control how the sections are
-merged, and at what locations they are placed in memory through a
-linker script file. A very simple linker script file, is shown below.
+Как было описано в предыдущем разделе, объединение и размещение секций
+выполняется линкером. Программист может контролировать этот процесс через
+`скрипт линкера`. Очень простой пример скрипта линкера:
 
-.Basic linker script
+.Простой скрипт линкера
 ------
 SECTIONS { <1>
 	. = 0x00000000; <2>
@@ -843,24 +842,23 @@ SECTIONS { <1>
 }
 ------
 
-<1> The `SECTIONS` command is the most important linker command, it
-specifies how the sections are to be merged and at what location they
-are to be placed.
+<1> Команда `SECTIONS` наиболее важная команда, она указывает как секции
+объединяются, и по каким адресам они размещаются.
 
-<2> Within the block following the `SECTIONS` command, the `.`
-(period) represents the location counter. The location is always
-initialised to `0x0`. It can be modified by assigning a new value to
-it. Setting the value to `0x0` at the beginning is superfluous.
+<2> Внутри блока `SECTIONS` команда `.` (точка) представляет
+`указатель адреса размещения`.
+Указатель адреса всегда инициализируется `0x0`. Его можно модифицировать
+явно присваивая новое значение. Показанная явная установка на `0x0` на самом
+деле не нужна.
 
-<3> This part of the script specifies that, the `.text` section from
-the input files `abc.o` and `def.o` should go to the `.text` section
-of the output file.
+<3> Этот блок скрипта определяет что секция `.text` выходного файла
+составляется из секций `.text` в файлах `abc.o` и `def.o`, причем именно в
+этом порядке.
 
-The linker script can be further simplified and generalised by using
-the wild card character `*` instead of individually specifying the
-file names.
+Скрипт линкера может быть значительно упрощен и универсализирован с помощью
+использования символа шаблона `*` вместо индивидуального указания имен файлов:
 
-.Wildcard in linker scripts
+.Шаблоны в скриптах линкера
 ------
 SECTIONS {
 	. = 0x00000000;
@@ -868,22 +866,21 @@ SECTIONS {
 }
 ------
 
-If the program contains both `.text` and `.data` sections, the `.data`
-section merging and location can be specified as shown below.
+Если программа одновременно содержит секции `.text` и `.data`, объединение и 
+размещение секций можно прописать вот так: 
 
 [[linker1]]
-.Multiple sections in linker scripts
+.Несколько секций
 ------
 include::code/sum-data.lds[]
 ------
 
-Here, the `.text` section is located at `0x0` and `.data` is located
-at `0x400`. Note that, if the location counter is not assigned a
-different value, the `.text` and `.data` sections will be located at
-adjacent memory locations.
+Здесь секция `.text` размещается по адресу `0x0`, а секция `.data` -- `0x400`.
+Отметим, что если указателю размещения не приваивать значения, секции
+`.text` и `.data` будут размещены в смежных областях памяти.     
 
-Linker Script Example
-~~~~~~~~~~~~~~~~~~~~~
+Пример скрипта линкера
+~~~~~~~~~~~~~~~~~~~~~~
 
 To demonstrate the use of linker scripts, we will use the linker
 script shown in <<linker1>> to control the placement of a program's
