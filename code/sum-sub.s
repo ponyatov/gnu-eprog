@@ -1,15 +1,15 @@
-	@ Args
-	@ r0: Start address of array
-	@ r1: End address of array
-	@
-	@ Result
-	@ r3: Sum of Array
-	
-	.global sum
-	
-sum:	mov   r3, #0		@ r3 = 0
-loop:	ldrb  r2, [r0], #1	@ r2 = *r0++    ; Get array element
-	add   r3, r2, r3	@ r3 += r2      ; Calculate sum
-	cmp   r0, r1		@ if (r0 != r1)	; Check if hit end-of-array
-	bne   loop		@    goto loop  ; Loop
-	mov   pc, lr		@ pc = lr	; Return when done
+        @ Аргументы (в регистрах)
+        @ r0: начальный адрес массива
+        @ r1: конечный адрес массива
+        @
+        @ Возврат результата
+        @ r3: сумма массива
+
+        .global sum
+
+sum:    mov   r3, #0        @ r3 = 0
+loop:   ldrb  r2, [r0], #1  @ r2 = *r0++    ; получить следующий элемент
+        add   r3, r2, r3    @ r3 += r2      ; суммирование
+        cmp   r0, r1        @ if (r0 != r1) ; проверка на конец массива
+        bne   loop          @ goto loop     ; цикл
+        mov   pc, lr        @ pc = lr       ; возврат результата по готовности
