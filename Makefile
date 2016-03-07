@@ -24,7 +24,8 @@ htmls = arm-iset.html \
 	inline-assembly.html \
 	arm-stacks.html
 
-sources = code/sum.s code/strlen.s code/sum-sub.s code/main.s
+sources = code/sum.s code/strlen.s code/sum-sub.s code/main.s \
+	code/add-ram.objdump
 	
 # available multilanguage versions see lang-*.conf files
 # use make ALANG=ru override for translated version build
