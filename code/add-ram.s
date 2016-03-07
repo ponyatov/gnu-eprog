@@ -1,23 +1,21 @@
 	.data
-val1:	.4byte 10		@ First number
-val2:	.4byte 30		@ Second number
-result:	.space 4		@ 1 byte space for result	
+val1:	.4byte 10		@ первое число
+val2:	.4byte 30		@ второе число
+result:	.4byte 0		@ 4 байта для результата
 
 	.text
-
-	;; Copy data to RAM.
+	@ Копирование данных в ОЗУ
 start:	
 	ldr   r0, =flash_sdata
 	ldr   r1, =ram_sdata
 	ldr   r2, =data_size
-
 copy:
 	ldrb  r4, [r0], #1
 	strb  r4, [r1], #1
 	subs  r2, r2, #1
 	bne   copy	
 
-	;; Add and store result.
+	@ сложение и сохранение результата
 	ldr   r0, =val1	 	@ r0 = &val1
 	ldr   r1, =val2		@ r1 = &val2
 

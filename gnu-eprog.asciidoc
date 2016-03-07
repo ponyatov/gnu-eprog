@@ -1083,21 +1083,20 @@ SECTIONS {
 Копирование `.data` в ОЗУ
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To copy the data from Flash to RAM, the following information is
-required.
+Для копирования данных инициализации из флеша в ОЗУ требуется следующая 
+информация: 
 
-  1. Address of data in Flash (`flash_sdata`)
-  2. Address of data in RAM (`ram_sdata`)
-  3. Size of the `.data` section. (`data_size`)
+  1. Адрес данных во флеше (`flash_sdata`)
+  2. Адрес данных в ОЗУ (`ram_sdata`)
+  3. Размер секции `.data` (`data_size`)
 
-With this information the data can be copied from Flash to RAM using
-the following code snippet.
+Имея эту информацию, сегмент `.data` может быть инициализирован
+может быть скопирован следующим стартовым кодом:
 
 ------
 	ldr   r0, =flash_sdata
 	ldr   r1, =ram_sdata
 	ldr   r2, =data_size
-
 copy:	
 	ldrb  r4, [r0], #1
 	strb  r4, [r1], #1
@@ -1105,48 +1104,48 @@ copy:
 	bne   copy
 ------
 
-The linker script can be slightly modified to provide these
-information.
+Для получения такой информации скрипт линкера нужно немного модифицировать:
 
 [[linker2]]
-.Linker Script with Section Copy Symbols
+.Скрипт линкера с символами для копирования секции `.data`
 ------
 SECTIONS {
 	. = 0x00000000;
-	.text : { 
-	      * (.text);
-	}
+	.text : { * (.text); }
 	flash_sdata = .; <1>
 
 	. = 0xA0000000;
 	ram_sdata = .; <2>
-	.data : AT (flash_sdata) { 
-              * (.data); 
-        };
+	.data : AT (flash_sdata) { * (.data); }
 	ram_edata = .; <3>
 	data_size = ram_edata - ram_sdata; <3>
 }
 ------
 
-<1> Start of data in Flash is right after all the code in Flash.
+<1> Начало данных во флеше сразу за секцией кода.
 
-<2> Start of data in RAM is at the base address of RAM.
+<2> Начало данных -- базовый адрес ОЗУ в адресном пространстве процессора.
 
-<3> Obtaining the size of data is not straight forward. The data size
-is calculated from the difference in the start of data in RAM and the
-end of data in RAM. Yes, simple expressions are allowed within the
-linker script.
+<3> Получение размера непросто: размер вычисляется вычитанием адресов
+метод начала и конца данных. Да, простые выражения тоже можно использовать в
+скрипте линкера.
 
-The add program with data copied to RAM from Flash is listed below.
+Полный листинг программы с добавленной инициализацией данных:
 
-.Add Data in RAM (with copy)
+.Инициализация ОЗУ
 [lang="armasm"]
 ------
 include::code/add-ram.s[]
 ------
 
-The program is assembled and linked using the linker script listed in
-<<linker2>>. The program is executed and tested within Qemu.
+.add-ram.objdump
+------
+include::code/add-ram.objdump[]
+------
+
+Программа была ассемблирована и слинкована используя .lds в <<linker2>>.
+
+Запуск и тестирование программы в Qemu:
 
 ------
 qemu-system-arm -M connex -pflash flash.bin -nographic -serial /dev/null
@@ -1154,11 +1153,10 @@ qemu-system-arm -M connex -pflash flash.bin -nographic -serial /dev/null
 a0000000:         10         30         40          0
 ------
 
-NOTE: In a real system with an SDRAM, the memory should not be
-accessed right-away. The memory controller will have to be initialised
-before performing a memory access. Our code works because the
-simulated memory does not require the memory controller to be
-initialised.
+NOTE: На реальной физической системе с SDRAM, память не может использована 
+сразу. Сначала нужно инициализировать контроллер памяти, и только затем
+обращаться к ОЗУ. Наш код работает потому, что симулятор не требует
+инициализации контроллера.
 
 [[exc-handle]]
 Exception Handling
