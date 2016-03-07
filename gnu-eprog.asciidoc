@@ -1045,20 +1045,17 @@ TIP: как видно из раздела <<objdump>>, в терминах `ld`
      данных`, копируя образ секции `.data` из флеша (из адреса хранения LMA) 
      в ОЗУ (по адресу исполнения, VMA).
 
-Specifying Load Address
-~~~~~~~~~~~~~~~~~~~~~~~
+Спецификация адреса загрузки LMA
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The run-time address is what that should be used for determining the
-address of labels. In the previous linker script, we have specified
-the run-time address for the `.data` section. The load address is not
-explicitly specified, and defaults to the run-time address. This is
-OK, with the previous examples, since the programs were executed
-directly from Flash. But, if data is to be placed in RAM during
-execution, the load address should correspond to Flash and the
-run-time address should correspond to RAM.
+VMA это адрес, который должен быть использован для вычисления адресов всех меток
+при исполнении программы. В предыдущем линк-скрипте мы задали VMA секции `.data`.
+LDA не указан, и по умолчанию равен VMA. Это нормально для сегментов, 
+размещаемых в ROM. Но если используются инициализируемые сегменты в ОЗУ, нужно
+задать отдельно VMA и LMA.  
 
-A load address different from the run-time address can be specified
-using the `AT` keyword. The modified linker script is shown below.
+Адрес загрузки LMA, отличающийся от адреса выполнения VMA, задается с помощью
+команды `AT`. Модифицированный скрипт показан ниже:
 
 ------
 SECTIONS {
@@ -1071,21 +1068,20 @@ SECTIONS {
 }
 ------
 
-<1> Symbols can be created on the fly within the `SECTIONS` command by
-assigning values to them. Here `etext` is assigned the value of the
-location counter at that position. `etext` contains the address of the
-next free location in Flash right after all the code. This will be
-used later on to specify where the `.data` section is to be placed in
-Flash. Note that `etext` itself will not be allocated any memory, it
-is just an entry in the symbol table.
+<1> В блоках описания секций можно создавать символы, назначая им значения:
+числовой адрес или текущую позицию с помощью точки ".". Символу `etext`
+назначается адрес флеша, следующий сразу за концом кода.
+Отметим что `etext` сам по себе не выделяет никакой
+памяти, а только помечает адрес LMA сегмента .data в таблице символов.
 
-<2> The `AT` keyword specifies the load address of the `.data`
-section. An address or symbol (whose value is a valid address) could
-be passed as argument to `AT`. Here the load address of `.data` is
-specified as the location right after all the code in Flash.
+<2> При настройке сегмента
+`.data` с помощью ключевого слова `AT (etext)` назначается LMA для хранения
+содержимого сегмента данных. Команде `AT` может быть передан любой адрес
+или символ (значением которого является валидный адрес). Так что в результате
+мы настроили адрес хранения .data на область флеша, помеченную символов `etext`. 
 
-Copying `.data` to RAM
-~~~~~~~~~~~~~~~~~~~~~~
+Копирование `.data` в ОЗУ
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To copy the data from Flash to RAM, the following information is
 required.
