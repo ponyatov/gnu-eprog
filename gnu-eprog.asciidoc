@@ -882,35 +882,33 @@ include::code/sum-data.lds[]
 Пример скрипта линкера
 ~~~~~~~~~~~~~~~~~~~~~~
 
-To demonstrate the use of linker scripts, we will use the linker
-script shown in <<linker1>> to control the placement of a program's
-`.text` and `.data` section. We will use a slightly modified version
-of the sum of array program for this purpose. The code is shown below.
+Для демонстрации использования скриптов линкера рассмотрим применение скрипта
+<<linker1>> для размещения секций `.text` и `.data`. Для этого используем
+немного измененный пример программы суммирования массива, разделив код и данные
+в отдельные секции:  
 
 [lang="armasm"]
 ----
 include::code/sum-data.s[]
 ----
 
-The only change here is that the array is now in the `.data`
-section. Also note that the nasty branch instruction to skip over the
-data is also not required, since the linker script will place the
-`.text` section and `.data` section appropriately. As a result,
-statements can be placed in the program, in any convenient way, and
-the linker script will take care of placing the sections correctly in
-memory.
+<1> Изменения заключаются в выделении массива в секцию `.data` и удалении 
+директивы выравнивания `.align`.
 
-When the program is linked, the linker script is passed as an input to
-the linker, as shown in the following command.
+<2> Также не требуется инструкция перехода на метку `start`
+для обхода данных, так как линкер разместит секции отдельно. В результате
+команды программы размещаются любым удобным способом, а скрипт линкера 
+позаботится о правильном размещении сегментов в памяти.
+
+При линковке программы в командной строке нужно указать использования скрипта:
 
 ------
 $ arm-none-eabi-as -o sum-data.o sum-data.s
 $ arm-none-eabi-ld -T sum-data.lds -o sum-data.elf sum-data.o
 ------
 
-The option `-T sum-data.lds` specifies that `sum-data.lds` is to be
-used as the linker script. Dumping the symbol table, will provide an
-insight into how the sections are placed in memory.
+Опция `-T sum-data.lds` указывает что используется скрипт `sum-data.lds`.
+Выводим таблицу символов и видим размещение сегментов в памяти: 
 
 ------
 $ arm-none-eabi-nm -n sum-data.elf
@@ -921,9 +919,67 @@ $ arm-none-eabi-nm -n sum-data.elf
 00000403 d eoa
 ------
 
-From the symbol table it is obvious that the `.text` is placed
-starting from address `0x0` and `.data` section is placed starting
-from address `0x400`.
+Из таблицы символолов видно что секция `.text` размещена с адреса `0x0`,
+а секция `.data` c `0x400`.
+
+Анализ объектного/исполняемого файла утилитой `objdump`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Более подробную информацию даст утилита `objdump`:
+------
+$ arm-none-eabi-as -o sum-data.o sum-data.s
+$ arm-none-eabi-ld -T sum-data.lds -o sum-data.elf sum-data.o
+$ arm-none-eabi-objdump sum-data.elf
+include::code/sum-data.objdump[]
+------
+
+<1> указание на архитектуру, 
+
+<2> для которой предназначен исполняемый файл
+
+<3> стартовый адрес в секции `.text`, по умолчанию `0x0` (обязателен и 
+фиксирован для прошивок микроконтроллеров, т.к. на него перескакивает
+аппаратный сброс)
+
+<4> ABI -- соглашения о передаче 
+
+<5> параметров в регистрах/стеке (для Си кода) 
+
+<6> приведена подробная информация о секциях
+
+<7> `.text` секция кода
+
+<8> `.data` секция данных
+
+<9> служебная информация
+
+<10> столбец `Size` указывает размер секции в байтах (hex)
+
+<11> `VMA` (Virtual Memory Address) указывает адрес размещения сегмента
+
+<12> `Algn` (Align) автоматическое выравнивание содержимого сегмента в памяти, 
+в степени двойки `2**n`: код выравнивается кратно `2**2=4` байтам,
+данные не выравниваются `2**0=1` 
+
+<13> Флаг `ALLOC` (Allocate) указывает что при загрузке программы под этот 
+сегмент должна быть выделена память.
+
+<14> `LOAD` указывает что содержимое сегмента должно загружаться из
+исполняемого файла в память при использовании ОС, а для микроконтроллеров
+указывает программатору что сегмент нужно прошивать.
+
+<15> `READONLY` сегмент с константными неизменяемыми данными, которые могут быть
+размещены в ROM, а при использовании ОС область памяти должна быть помечена 
+в таблице системы защиты памяти как R/O. Отсутствие флага `READONLY` + наличие
+`LOAD` указывает что данные должны загружаться `только в ОЗУ`. 
+
+<16> сегмент кода
+
+<17> сегмент данных
+
+<18> таблица символов
+
+<19> дизассемблированный код из секций, помеченных флагом `CODE`: `.text`
 
 [[data-in-ram]]
 Data in RAM, Example
