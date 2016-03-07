@@ -1159,35 +1159,34 @@ NOTE: На реальной физической системе с SDRAM, пам
 инициализации контроллера.
 
 [[exc-handle]]
-Exception Handling
-------------------
+Обработка аппаратных исключений
+-------------------------------
 
-The examples given so far have a major bug. The first 8 words in the
-memory map are reserved for the exception vectors. When an exception
-occurs the control is transferred to one these 8 locations. The
-exceptions and their exception vector addresses are show in the
-following table.
+Все примеры программ, приведенные выше, содержат гигантский баг: `первые
+8 машинных слов в адресном пространстве зарезервированы для векторов
+исключений`. Когда возникает исключение, выполняется аппаратный переход
+на один из этих жестко заданных меток. Исключения и их адреса приведены
+в следующей таблице:
 
-.Exception Vector Addresses
+.Адреса векторов исключений
 [options="header"]
 |======
-| Exception               | Address
-| Reset                   | 0x00
-| Undefined Instruction	  | 0x04
-| Software Interrupt (SWI)| 0x08
-| Prefetch Abort	  | 0x0C
-| Data Abort		  | 0x10
-| Reserved, not used	  | 0x14
-| IRQ			  | 0x18
-| FIQ			  | 0x1C
+| Исключение               || Адрес
+| Сброс | Reset                   | 0x00
+| Неопределенная инструкция | Undefined Instruction	  | 0x04
+| Программное прерывание (SWI) | Software Interrupt (SWI)| 0x08
+| Ошибка предвыборки | Prefetch Abort	  | 0x0C
+| Ошибка данных | Data Abort		  | 0x10
+| Резерв, не используется | Reserved, not used	  | 0x14
+| Аппаратное прерывание | IRQ			  | 0x18
+| Быстрое прерывание | FIQ			  | 0x1C
 |======
 
-These locations are supposed to contain a branch that will transfer
-control the appropriate exception handler. In the examples we have
-seen so far, we haven't inserted branch instructions at the exception
-vector addresses. We got away without issues since these exceptions
-did not occur. All the above programs can be fixed, by linking them
-with the following assembly code.
+Предполагается что по этим адресам находятся команды перехода, которые
+передадут управление на соответствующий произвольный адрес обработчика
+исключения. Во всех примерах ранее бы не вставляли таблицу обработчиков
+исключений, так как мы предполагали что эти исключения не случатся. Все
+эти программы можно скорректировать, слинковав их со следующим кодом:  
 
 ------
 	.section "vectors"
@@ -1201,15 +1200,18 @@ irq:	b     irq
 fiq:	b     fiq
 ------
 
-Only the reset exception is vectored to a different address
-`start`. All other exceptions are vectored to the same address. So if
-any exception other that reset occurs, the processor will be spinning
-in the same location. The exception can then be identified by looking
-at the value of `pc` through a debugger (the monitor interface in our
-case).
+Только обработчик reset векторизован на отдельный адрес `start`. Все остальные
+исключения векторизованы сами на себя. Таким образом если случится любое
+исключение, процессор зациклится на соответствущем векторе. В этом случае
+возникшее исключение может быть идентифицирвовано в отладчике (мониторе Qemu,
+в нашем случае) по адресу указателя команд `pc=r15`.
 
-To ensure that these instruction are placed at the exception vector
-addresses, the linker script should look something like below.
+В ассемблерном коде видно применение директивы `.section` которая позволяет
+создавать секции с произвольными именами, чтобы прописать для них отдельную
+обработку в скрипте линкера.  
+
+Чтобы обеспечить правильное размещение таблицы обработчиков, нужно
+скорректировать скрипт линкера: 
 
 ------
 SECTIONS {
@@ -1223,12 +1225,13 @@ SECTIONS {
 }
 ------
 
-Notice how the `vectors` section is placed before all other code,
-ensuring that the `vectors` is located at address starting from 0x0.
+Обратите внимание что секция `vectors` размещена сразу за инициализацией
+указателя размещения на первом месте, до всего остального кода, что гарантирует
+что таблица векторов будет находится по жесткому адресу `0x0`.
 
 [[c-startup]]
-C Startup
----------
+Стартап-код на Си
+-----------------
 
 It is not possible to directly execute C code, when the processor
 comes out of reset. Since, unlike assembly language, C programs need
