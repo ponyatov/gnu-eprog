@@ -922,6 +922,7 @@ $ arm-none-eabi-nm -n sum-data.elf
 Из таблицы символолов видно что секция `.text` размещена с адреса `0x0`,
 а секция `.data` c `0x400`.
 
+[[objdump]]
 Анализ объектного/исполняемого файла утилитой `objdump`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -982,29 +983,29 @@ include::code/sum-data.objdump[]
 <19> дизассемблированный код из секций, помеченных флагом `CODE`: `.text`
 
 [[data-in-ram]]
-Data in RAM, Example
+Данные в RAM, пример
 --------------------
 
-Now that we know, how to write linker scripts, we will attempt to
-write a program, and place the `.data` section in RAM.
+Теперь мы знаем как писать скрипты линкера, и можем попытаться написать
+программу, разместив данные в секции `.data` в ОЗУ.
 
-The add program is modified to load two values from RAM, add them and
-store the result back to RAM. The two values and the space for result
-is placed in the `.data` section.
+Программа сложения модифицирована для загрузки значений из ОЗУ, и записи
+результата обратно в ОЗУ: память для операндов и результат резмещена в секции
+`data`. 
 
-.Add Data in RAM
+.Данные в ОЗУ
 [lang="armasm"]
 ------
 include::code/add-mem.s[]
 ------
 
-When the program is linked, the linker script shown below is used.
+Скрипт для линковки:
 
 ------
 include::code/flash-ram.lds[]
 ------
 
-The dump of the symbol table of `.elf` is shown below.
+Дамп таблицы символов:
 
 ------
 $ arm-none-eabi-nm -n add-mem.elf
@@ -1015,33 +1016,34 @@ a0000001 d val2
 a0000002 d result
 ------
 
-The linker script seems to have solved the problem of placing the
-`.data` section in RAM. But wait, the solution is not complete yet!
+Срипт линкера решил проблему с размещением данных, но 
+`проблема с использованием ОЗУ еще не решена !`
 
-RAM is Volatile!
-~~~~~~~~~~~~~~~~
+RAM энергозависима (volatile) !
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-RAM is volatile memory, and hence it is not possible to directly make
-the data available in RAM, on power up.
+ОЗУ стирается при отключении питания, поэтому для использования ОЗУ
+недостаточно разместить сегменты.
 
-All code and data *should* be stored in Flash before power-up. On
-power-up, a startup code is supposed to copy the data from Flash to
-RAM, and then proceed with the execution of the program. So the
-program's `.data` section has two addresses, a *load address* in Flash
-and a *run-time address* in RAM.
+NOTE: `Во флеше должнен храниться` не только код, но `и данные`, чтобы при подаче
+питания специальный `startup код` выполнил `инициалиацию ОЗУ`, копируя данные из
+флеша. Затем управление передается основной программе. 
 
-TIP: In `ld` parlance, the load address is called LMA (Load Memory
-Address), and the run-time address is called VMA (Virtual Memory
-Address.).
+Поэтому секция `.data` имеет `два адреса размещения`: адрес `хранения во флеше`
+и адрес `размещения в ОЗУ`.
 
-The following two modifications have to be done, to make the program
-work correctly.
+TIP: как видно из раздела <<objdump>>, в терминах `ld` адрес хранения (загрузки)
+называется `LMA` (Load Memory Address), а адрес размещения (времени выполнения)
+`VMA` (Virtual Memory Address).
 
-  1. The linker script has to be modified to specify both the load
-     address and the run-time address, for the `.data` section.
+Нужно сделать следующие две мсодификации, чтобы программа работала корректно:
 
-  2. A small piece of code should copy the `.data` section from Flash
-     (load address) to RAM (run-time address).
+  1. модифицировать .lds чтобы для секции `.data`
+     в нем учитывались оба адреса: LMA и VMA. 
+
+  2. написать небольшой кусочек кода, который будет `инициализировать память 
+     данных`, копируя образ секции `.data` из флеша (из адреса хранения LMA) 
+     в ОЗУ (по адресу исполнения, VMA).
 
 Specifying Load Address
 ~~~~~~~~~~~~~~~~~~~~~~~

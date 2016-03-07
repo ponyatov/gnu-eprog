@@ -1,7 +1,7 @@
 	.data
-val1:	.4byte 10		@ First number
-val2:	.4byte 30		@ Second number
-result:	.4byte 0		@ 4 byte space for result
+val1:	.4byte 10		@ первое число
+val2:	.4byte 30		@ второе число
+result:	.4byte 0		@ 4 байта для результата
 
 	.text
 	.align
