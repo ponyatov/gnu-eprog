@@ -1444,16 +1444,16 @@ a0000018:         33
 ------
 
 [[c-library]]
-Using the C Library
--------------------
+Использование библиотеки Си
+---------------------------
 
-FIXME: This section is yet to be written.
+FIXME: Эту секцию еще нужно написать.
 
 [[inline-assembly]]
-Inline Assembly
----------------
+Inline-ассемблер
+----------------
 
-FIXME: This section is yet to be written.
+FIXME: Эту секцию еще нужно написать.
 
 [[make]]
 Using `make` for build automation
