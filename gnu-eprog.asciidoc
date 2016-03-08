@@ -1350,45 +1350,43 @@ Flash/ROM. Для этого нужно модифицировать .lds.
 символы маркирующие начало и конец секции `.bss`, которые будут использованы
 в startup-коде при ее очистке. `.rodata` размещается сразу за `.text` во флеше:
 
-.Section Placement
+.Размещение секций
 image::csections.png[]
 
-.Linker Script for C code
+.Скрипт линкера для Си кода
 ------
 include::code/csum.lds[]
 ------
 
-The startup code has the following parts
+Startup-код включает следующие части:
 
-    1. exception vectors
-    2. code to copy the `.data` from Flash to RAM
-    3. code to zero out the `.bss`
-    4. code to setup the stack pointer
-    5. branch to main
+    1. вектора исключений
+    2. код копирования `.data` из Flash в RAM
+    3. код обнуления `.bss`
+    4. код установки указателя стека
+    5. переход на `_main`
 
-.C Startup Assembly
+.Стартовый код для Си программы на ассемблере
 [lang="armasm"]
 ------
 include::code/startup.s[]
 ------
 
-To compile the code, it is not necessary to invoke the assembler,
-compiler and linker individually. `gcc` is intelligent enough to do
-that for us. 
-
-As promised before, we will compile and execute the C code shown
-in <<csum>>.
+Для компиляции кода не требуется отдельно вызывать ассемблер, линкер и
+компилятор Си: программа `gcc` является оберткой, которая умеет делать это сама,
+автоматически вызывая ассемблер, компилятор и линкер в зависимости от типов
+файлов. Поэтому мы можем скомпилировать весь наш код одной командой: 
 
 ------
 $ arm-none-eabi-gcc -nostdlib -o csum.elf -T csum.lds csum.c startup.s
 ------
 
-The `-nostdlib` option is used to specify that the standard C library
-should not be linked in. A little extra care has to be taken when the
-C library is linked in. This is discussed in <<c-library>>.
+Опция `-nostdlib` используется для указания, что нам при компиляции
+не нужно подключать стандартную библиотеку Си (newlib). Эта библиотека крайне
+полезна, но для ее использования нужно выполнить некоторые дополнительные
+действия, описанные в разделе <<c-library>>.
 
-A dump of the symbol table will give a better picture of how things
-have been placed in memory.
+Дамп таблицы символов даст больше информации о расположении объектов в памяти:
 
 ------
 $ arm-none-eabi-nm -n csum.elf
@@ -1417,24 +1415,25 @@ a0000018 A sbss
 a0000018 b sum		<5>
 a000001c A ebss
 ------
-<1> `reset` and the rest of the exception vectors are placed starting from `0x0`.
+<1> `reset` и остальные вектора исключений размещаются с `0x0`.
 
-<2> The assembly code is placed right after the 8 exception vectors
+<2> ассемблерный код находится сразу после 8 векторов исключений 
     (`8 * 4 = 32 = 0x20`).
 
-<3> The read-only data `n`, is placed in Flash after the code.
+<3> константные данные `n`, размещены во флеше после кода.
 
-<4> The initialized data `arr`, an array of 6 integers, is placed at
-    the start of RAM `0xA0000000`.
+<4> инициализированные данные `arr`, массив из 6 целых, размещен
+    с начала ОЗУ `0xA0000000`.
 
-<5> The uninitialized data `sum` is placed after the array of 6
-    integers. (`6 * 4 = 24 = 0x18`)
+<5> неинициализированные данные `sum` размещен после массива из 6 целых.
+    (`6 * 4 = 24 = 0x18`)
 
-To execute the program, convert the program to `.bin` format, execute
-in Qemu, and dump the `sum` variable located at `0xA0000018`.
+Для выполнения программы преобразуем ее в `.bin` формат, запустим в Qemu,
+и выведем дамп переменной `sum` по адресу `0xA0000018`:
 
 ------
 $ arm-none-eabi-objcopy -O binary csum.elf csum.bin
+$ dd if=/dev/zero of=flash.bin bs=4K count=4K
 $ dd if=csum.bin of=flash.bin bs=4096 conv=notrunc
 $ qemu-system-arm -M connex -pflash flash.bin -nographic -serial /dev/null
 (qemu) xp /6dw 0xa0000000

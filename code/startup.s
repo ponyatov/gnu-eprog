@@ -10,12 +10,12 @@ fiq:	b     fiq
 
 	.text
 start:
-	@@ Copy data to RAM.
+	@@ копирование данных в ОЗУ
 	ldr   r0, =flash_sdata
 	ldr   r1, =ram_sdata
 	ldr   r2, =data_size
 
-	@@ Handle data_size == 0
+	@@ обработка случая data_size == 0
 	cmp   r2, #0
 	beq   init_bss
 copy:
@@ -25,12 +25,12 @@ copy:
 	bne    copy
 
 init_bss:
-	@@ Initialize .bss
+	@@ очистка .bss
 	ldr   r0, =sbss
 	ldr   r1, =ebss
 	ldr   r2, =bss_size
 
-	@@ Handle bss_size == 0
+	@@ обработка bss_size == 0
 	cmp   r2, #0
 	beq   init_stack
 	
@@ -41,7 +41,7 @@ zero:
 	bne   zero
 
 init_stack:
-	@@ Initialize the stack pointer
+	@@ инициализация стека
 	ldr   sp, =0xA4000000
 
 	bl    main
