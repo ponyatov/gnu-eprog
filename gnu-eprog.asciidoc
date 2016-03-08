@@ -1297,20 +1297,19 @@ NOTE: Адрес `0xA4000000` сам по себе не указывает на 
 *full*-descending, т.е. во время первого `push` в стек указатель `сначала 
 уменьшится`, и только потом значение будет записано уже в ОЗУ.
 
-Global Variables
-~~~~~~~~~~~~~~~~
+Глобальные переменные
+~~~~~~~~~~~~~~~~~~~~~
 
-When C code is compiled, the compiler places initialized global
-variables in the `.data` section. So just as with the assembly, the
-`.data` has to be copied from Flash to RAM.
+Когда компилируется Си-код, компилятор размещает инициализированные глобальные
+переменные в секцию `.data`. Как и для ассемблера, сегмент `.data` должен быть
+скопирован стартовым кодом в ОЗУ из флеша.
 
-The C language guarantees that all uninitialized global variables will
-be initialized to zero. When C programs are compiled, a separate
-section called `.bss` is used for uninitialized variables. Since the
-value of these variables are all zeroes to start with, they do not
-have to be stored in Flash. Before transferring control to C code, the
-memory locations corresponding to these variables have to be
-initialized to zero.
+Язык Си гарантирует что все неинициализированные глобальные переменные будут
+инициализированы нулем (старый стандарт Си не гарантировал). Когда си-программа
+компилируется, создается отдельный сегмент `.bss` для неинициализированных
+переменных. Так как для всего сегмента должно быть выполнено обнуление, его не
+нужно хранить во флеше. Перед передачей управления на си-код, содержимое `.bss`
+дожно быть зачищено startup-кодом.
 
 Read-only Data
 ~~~~~~~~~~~~~~
