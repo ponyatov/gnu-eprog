@@ -1233,34 +1233,32 @@ SECTIONS {
 Стартап-код на Си
 -----------------
 
-It is not possible to directly execute C code, when the processor
-comes out of reset. Since, unlike assembly language, C programs need
-some basic pre-requisites to be satisfied. This section will describe
-the pre-requisites and how to meet the pre-requisites.
+Если процесс только что был сброшен, невозможно напрямую выполниь Си код,
+так как в отличие от ассемблера, программы на Си требуют для себя некоторой
+предварительной настройки. В этом разделе описаны эти предварительные требования,
+и как их выполнить.
 
-We will take the example of C program that calculates the sum of an
-array as an example. And by the end of this section, we will be able
-to perform the necessary setup, transfer control to the C code and
-execute it.
+Мы возьмем пример Си-программы которая вычисляет сумму массива. И к концу
+раздела мы уже будем способны, сделав некоторые низкоуровневые
+настройки, передать управление и выполнить ее.
 
 [[csum]]
-.Sum of Array in C
+.Сумма массива на Си
 [lang="c"]
 ------
 include::code/csum.c[]
 ------
 
-Before transferring control to C code, the following have to be setup
-correctly.
+Перед передачей управления Си-коду, нужно выполнить следующие настройки:
 
-  1. Stack
-  2. Global variables
-     a. Initialized
-     b. Uninitialized
-  3. Read-only data
+  1. Стек
+  2. Глобальные переменные
+     a. Инициализированные
+     b. Неинициализированные
+  3. Константные данные
 
-Stack
-~~~~~
+Стек
+~~~~
 
 C uses the stack for storing local (auto) variables, passing function
 arguments, storing return address, etc. So it is essential that the
