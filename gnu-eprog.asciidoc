@@ -1320,15 +1320,15 @@ GCC размещает переменные, помеченные модифик
 Так как содержимое `.rodata` не модифицируется, оно может быть размещено в
 Flash/ROM. Для этого нужно модифицировать .lds.
 
-.eeprom (AVR8)
-~~~~~~~~~~~~~~
+Секция .eeprom (AVR8)
+~~~~~~~~~~~~~~~~~~~~~
 
 При написании прошивок для Atmel AVR8, существует модификатор `EEMEM`
 определенный в `avr/eeprom.h`:
 
 .avr/eeprom.h
 ------
-#define 	EEMEM   __attribute__((section(".eeprom")))
+#define EEMEM __attribute__((section(".eeprom")))
 ------
 
 который использует модификатор GCC `__attribute__((section("...")))`, который
@@ -1336,22 +1336,19 @@ Flash/ROM. Для этого нужно модифицировать .lds.
 выделяется из финального объектного файла, и программируется в Atmel ATmega
 отдельным вызовом `avrdude` (ПО программатора).
 
-Startup Code
-~~~~~~~~~~~~
+Стартовый код
+~~~~~~~~~~~~~
 
-Now that we know the pre-requisites we can create the linker script
-and the startup code. The linker script <<linker2>> is modified to
-accomodate the following.
+Теперь все готово к написанию скрипта линкера и стартового кода.
+Скрипт <<linker2>> модифицируется с добавлением размещения секций:
 
-  1. `.bss` section placement 
-  2. `vectors` section placement
-  3. `.rodata` section placement
+  1. `.bss`
+  2. `vectors`
+  3. `.rodata`
 
-The `.bss` is placed right after `.data` section in RAM. Symbols to
-locate the start of `.bss` and end of `.bss` are also created in the
-linker script. The `.rodata` is placed right after `.text` section in
-Flash. The following diagram shows the placement of the various
-sections.
+Секция `.bss` размещается сразу за секцией `.data` в ОЗУ. Также создаются
+символы маркирующие начало и конец секции `.bss`, которые будут использованы
+в startup-коде при ее очистке. `.rodata` размещается сразу за `.text` во флеше:
 
 .Section Placement
 image::csections.png[]
