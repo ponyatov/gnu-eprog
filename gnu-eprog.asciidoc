@@ -1311,16 +1311,14 @@ NOTE: Адрес `0xA4000000` сам по себе не указывает на 
 нужно хранить во флеше. Перед передачей управления на си-код, содержимое `.bss`
 дожно быть зачищено startup-кодом.
 
-Read-only Data
-~~~~~~~~~~~~~~
+Константные данные
+~~~~~~~~~~~~~~~~~~
 
-GCC places global variables marked as `const` in a separate section,
-called `.rodata`. The `.rodata` is also used for storing string
-constants. 
+GCC размещает переменные, помеченные модификатором `const`, в отдельный сегмент
+`.rodata`. Также `.rodata` используется для хранения всех "строковых констант". 
 
-Since contents of `.rodata` section will not be modified, they can be
-placed in Flash. The linker script has to modified to accomodate
-this. 
+Так как содержимое `.rodata` не модифицируется, оно может быть размещено в
+Flash/ROM. Для этого нужно модифицировать .lds.
 
 Startup Code
 ~~~~~~~~~~~~
