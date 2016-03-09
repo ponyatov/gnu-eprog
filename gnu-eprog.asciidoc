@@ -1717,34 +1717,38 @@ i686-linux-uclibc,.. задает множество настроек кросс
 `CXXFLAGS`:: флаги для компилятора C++ 
 
 [[makestdtargets]]
-Standard targets
+Стандартные цели
 ~~~~~~~~~~~~~~~~
 
-OpenSource developers world have some widely used standard targets:
+Разработчики мира OpenSource широко используют несколько стандартных целей:
 
-`all`:: build all project, `it must be first rule in Makefile`
+`all`:: собрать весь проект, `эта цель должна быть первым правилом в Makefile`
 
-`doc`:: build documentation, using some of asciidoc, DocBook, LaTeX,.. markup
-translators, which will translate doc sources into some widely used document
-format like .html and manual.pdf files. Fortunately, you can use special program
-packages (for some programming languages like Java, C++,..) which let you
-process your program sources and autogenerate tables of labels, function 
-definitions with parameters a.k.a call signatures, source file lists, 
-and include this tables into documentation.   
+`doc`:: оттранслировать документацию, используя утилиты типа asciidoc, DocBook, 
+LaTeX,.. и другие трансляторы разметки, которые преобразуют исходники 
+документации из языка разметки в какой-то широко используемый формат 
+документации типа .html или manual.pdf. 
 
-`clean`:: remove all intermediate files (.o .elf .bin ...) and program binary.
-Typical use of `clean` is command which you must use for total program rebuild
-from scratch:
+NOTE: Удачно что вы можете использовать
+специальные пакеты программ (для некоторых языков программирования типа Java,
+C++,..) которые обработают исходники ваших программ, и сгенерируют таблицы меток,
+определения функций с параметрами a.k.a сигнатуры вызовов, листинги исходников
+с цветовым оформлением, и включат их в документацию. 
+
+`clean`:: удалить все промежуточные файлы (.o .elf .bin ...) и 
+исполняемый файл программы. Типичное использование `clean` -- команда которую
+вы должны использовать для полной перекомпиляции с нуля:
 
 ------
 make clean
 make
 ------
 
-`distclean`:: same as clean with removing generated files going into binary
-distribution of built program package: .pdf/.html documentation,..
+`distclean`:: то же что `clean` с удалением всех сгенерированных файлов, в т.ч.
+влючаемых в бинарный дистрибутив откомпилированной программы: документация
+.pdf/.html documentation,..
 
-.Recommended Makefile rules
+.Рекомендуемые правила Makefile
 ------
 FLASH = add.flash arrsum.flash strlen.flash 
 
@@ -1760,8 +1764,8 @@ distclean: clean
 ------
 
 [[makephony]]
-.PHONY targets
-~~~~~~~~~~~~~
+.PHONY-цели
+~~~~~~~~~~~
 
 In previous makefile sample, you can see `.PHONY some` directives.
 This directives marks `target` is one that is not really the name of a file;
