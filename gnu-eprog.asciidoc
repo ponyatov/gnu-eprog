@@ -1534,31 +1534,31 @@ NOTE: Если вы запускаете `make` без параметров, `п
 правилах. 
 
 [[makeseltarget]]
-Selecting specific `target`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Выбор конкретной `цели`
+~~~~~~~~~~~~~~~~~~~~~~~
 
-If you need to update only specific `target`, not first rule, put required 
-file name after make command:
+Если вам нужно обновить только определенный файл-`цель`, поместите необходимое
+имя файла после команды `make`:
 
 ------
 $ make add.o
 make: 'add.o' is up to date.
 ------
 
-This command will build only add.o object file, if and only if you modified add.s 
-before command run. If you see some message like `make: 'add.o' is up to date.`,
-source file was not changed, and make will not run assembler rule. 
+Эта команда будет перекомпилировать только файл `add.o`, в том и только в том
+случае, если вы перед запуском команды изменяли `add.s`. Если вы видите 
+сообщение типа `make: add.o is up to date.`, исходные файлы не менялись, и
+`make` не будет запускать правило ассемблирования.
 
-This is very useful if you have lot of source files (thousands of files, like 
-Linux kernel for example), and fix some bug only in one source file. Without
-make (using simple .rc shell script of .bat ch file) every tiny change in 
-source file
-will tend recompiling of all project, which can lasts for several hours.
-Using `make` you can do only few required compiler and linker calls, which will
-be much much faster.
+Это очень полезно если у вас очень много файлов исходников (например тысячи 
+файлов, как у ядра Linux), и вы изменили несколько символов в одном файле. Без
+`make` (используя простой .rc shell-скрипт или .batник) каждое микроскопическое
+изменение потребует перекомпиляции всего проекта, которое может длиться 
+`несколькоо часов`. Использование `make` позволяет выполнить всего несколько
+вызовов компилятора и линкера, что будет намного намного быстрее. 
 
-Returning to our add.o, you can force assembler run not changing add.s source
-file, by `touch`ing them:
+Возаращаясь к нашему `add.o`, вы можете заставить ассемблер выполниться не
+изменяя файл `add.s`, через команду `touch`:
 
 ------
 $ touch add.s 
@@ -1566,13 +1566,13 @@ $ make add.o
 arm-none-eabi-as -o add.o add.s
 ------
 
-`touch` command changes only modification time of source file add.s, not
-changing it's content, thus `make` will note that file changed, and run
-assembler for selected target=add.o.
+Команда `touch` изменяет только дату модификации исходного файла `add.s`, не
+меняя его содержимое, так что `make` увидит что этот файл обновился, и запустит
+ассемблер для указанной цели `add.o`.
 
-By default, make will print every command and its output. If you have some
-reason to quiet make logging, you can prefix some compiler commands in make rule
-with "-" minus sign.  
+По умолчанию `make` выводит каждую команду и ее вывод. Если у вас есть какие-то
+причины для "тихой" работы `make`, вы можете добавить префикс "-" к командам
+компиляции.  
 
 [[makevars]]
 Variables
