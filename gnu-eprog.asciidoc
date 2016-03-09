@@ -1456,44 +1456,48 @@ Inline-ассемблер
 FIXME: Эту секцию еще нужно написать.
 
 [[make]]
-Using `make` for build automation
----------------------------------
+Использование `make` для автоматизации компиляции
+------------------------------------------------
 
-If you bothered with set of long commands you enter every time compiling
-samples in this tutorial, that's time to use `make` tool. 
-`make` is utility which controls file dependencies, described in `Makefile`.
+Если вам надоело каждый раз вводить длинные команды, компилируя примеры из 
+этого учебника, пришло время научиться пользоваться утилитой `make`. 
+`make` это утилита, отслеживающая зависимости файлов, описанные в файле 
+`Makefile`.
 
-Writing makefiles is `must have` skill for programmer, especially for large
-multifile projects contains dozens of files, which must be  
-assembled, compiled and translated into lot of different formats.
+Умение читать и писать makeфайлы `must have` навык для программиста, особенно
+для больших многофайловых проектов, содержащих сотни и тысячи файлов, которые 
+должны быть ассемблированы, откомплированы или оттранслированы в различные
+форматы. 
 
-Every dependency between two or more files must be configured into `rule`:
+Каждая зависимости между двумя или более файлами прописывается в make-`правиле`:
 
 ------
-<target> : <source>
-<tab><compiling command1>
-<tab><compiling command2>
+<цель> : <источник>
+<tab><команда компиляции 1>
+<tab><команда компиляции 2>
 ...
 ------
 
-`target`:: is one file name, or few file names, delimited by spaces. 
-This file(s) will be created or updated by this make rule.
+`цель`:: одно имя файла, или несколько имен, разделенных пробелами. Этот файл(ы)
+будут созданы или обновлены этим правилом.
 
-`source`:: null or more file names delimited by spaces. This file(s) will be
-`checked for modifications` by last edit time marker.
+`источник`:: 0+ имен файлов разделенных пробелами. Эти файл(ы) будут
+`проверяться на изменения` используя метку времени последней модификации.
 
-`tab`:: is tabulation char with ascii code 0x09, you must have editor able to
-work with tabs not overwriting them into sequences of spaces. Make rule can
-have zero rules or some tabbed compiling commands.
+`tab`:: символ табуляции с ascii кодом 0x09, вы должны использовать текстовый
+редактор, который умеет работать с табуляциями, не заменяя их
+последовательностями пробелов. make-правило может иметь 0+ табулированных
+команд компиляции.
 
-`compiling command`:: any command, like assembly or linker call, which updates
-`target`s, doing some useful job.   
+`команда компиляции`:: любая команда, такая как вызов ассемблера или линкера,
+которая обновляет `цель`, выполняя некоторую полезную работу.
 
-NOTE: The main principle of every makefile rule: if one of `source` files 
-`newer` then one of `target` file, rule body will be executed to update
-`target` s.
+NOTE: основной принцип каждого make-правила: если один из файлов-`источников`
+`новее` чем один из `целевых` файлов, будет выполнено тело правила, которое 
+обновит `цели`.
 
-Let's write simple makefile for tiny program, described in `Hello ARM` section:
+Давайте напишем простой Makefile для простейшей программы, описанной в разделе
+<<hello-arm>>:
 
 .Makefile
 ------
@@ -1510,13 +1514,13 @@ add.elf: add.o
 add.o: add.s
 	arm-none-eabi-as -o add.o add.s
 ------
-* note backslash and next left-tabbed line if first rule: 
-you can split long command into set
-of lines; each line must be tabbed with one or more tab to follow makerule 
-syntax. 
+* обратите внимание на обратный слэш и следующую табулированную строку:
+вы можете делить длинные команды на несколько строк; каждая строка должна быть
+табулирована для следования синтаксису make-правила.
 
-Enter make command without any arguments in directory with Makefile and source
-files, and you will get automatically compiled binary files and running Qemu.
+Введине в командной строке команду `make` без параметров, находясь в каталоге
+проета, в котором находится Makefile и исходные тексты программы, и вы сразу
+получите автоматически скомпилированые бинарные файлы и запущенный Qemu.
 
 ------
 $ make
@@ -1525,8 +1529,9 @@ QEMU 2.1.2 monitor - type 'help' for more information
 (qemu)
 ------
 
-NOTE: If you use make without parameters, `first rule` in Makefile will be
-processed as main `target`, walking over dependencies in all rules.
+NOTE: Если вы запускаете `make` без параметров, `первое правило` в Makefile
+будет обработано как `главная цель`, с обходом всех зависимостей в других 
+правилах. 
 
 [[makeseltarget]]
 Selecting specific `target`
