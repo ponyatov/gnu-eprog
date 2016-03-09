@@ -1827,13 +1827,14 @@ NOTE: опция `-f` программы `make` позволяет явно ук
 `/home/user/universal.makefile` для всех ваших проектов.
 
 [[makerules]]
-Using pattern rules
-~~~~~~~~~~~~~~~~~~~
+Использование шаблонных правил
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Finally, let's do some strange thing: define universal pattern rules, which will 
-assemble, compile and link `any` file with specific extensions. 
+В заключение, давайте сделаем странную вещь: определим шаблонные правила,
+которые будут ассемблировать, компилировать и линковать `любые` файлы с 
+определенными расширениями. 
 
-.Makefile pattern rules
+.Шаблонные правила для Makefile
 ------
 %.o: %.s
 	$(AS) $(ASFLAGS) -o $@ $<
@@ -1850,35 +1851,37 @@ assemble, compile and link `any` file with specific extensions.
 	dd if=$< of=$@ bs=4K conv=notrunc
 ------
 
-Now you don't need to define rules for every file compiling like:
+Теперь вам не надо определять по правилу для каждого файла типа:
 
 ------
 file1.o : file1.s
 	$(AS) -o $@ $<
 file2.o : file2.s
 	$(AS) -o $@ $<
-#### another +100500 dumb rules ####
+#### еще +100500 тупых правил ####
 file333.o : file333.s
 	$(AS) -o $@ $<
 ------
 
-Just define one rule:
+Просто определите одно правило:
 
 ------
 .PHONY: all
 all: file1.flash file2.flash ... file10050.flash
 ------
 
-and pattern rules set will be automagically build your huge project.
+и `шаблонные правила` автомагически соберут весь ваш гиганский проект.
 
-Suddenly, make has some metarules compiled in, and you can compile assembly,
-C/C++ and some other filetype pairs without any metarule in you file. 
+Внезапно, утилита `make` имеет несколько вкомпилированных в нее шаблонных правил
+для ходовых расширений типа .s .cpp .o ... для ассемблера, Си/C++ и некоторых
+других `пар типов файлов`, которые сработают даже если в вашем Makefile нет
+шаблонных правил. 
 
 [[contributing]]
-Contributing
-------------
+Участие в проекте
+-----------------
 
-Like every other open source project, we gladly accept
+Как любой другой open source проект project, we gladly accept
 contributions. Sections that need help have been marked with
 FIXMEs. All contributions will be duly credited in the credits page.
 
