@@ -1764,7 +1764,7 @@ distclean: clean
 ------
 
 [[makephony]]
-.PHONY-цели
+PHONY-цели
 ~~~~~~~~~~~
 
 В предыдущем примере makefile вы можете увидеть директивы `.PHONY чтото'.
@@ -1881,20 +1881,23 @@ all: file1.flash file2.flash ... file10050.flash
 Участие в проекте
 -----------------
 
-Как любой другой open source проект project, we gladly accept
-contributions. Sections that need help have been marked with
-FIXMEs. All contributions will be duly credited in the credits page.
+Как любой другой open source проект, мы с удовольствием принимаем дополнения.
+Секции, по которым нужна помощь, отмечены FIXME. Все дополнения будут отмечены
+в разделе <<credits>>. 
 
-This document's source is maintained in a public git repo located at
-https://github.com/bravegnu/gnu-eprog To contribute to the project,
-fork the project on github and send in a pull request.
+Оригинальные исходные тексты этого документа находятся в публичном
+Git-репозитории https://github.com/bravegnu/gnu-eprog
+Для участия в проекте сделайте форк на гитхабе и присылайте нам pull requestы.
 
-The document is written in
-http://www.methods.co.nz/asciidoc/[asciidoc], and converted to HTML
-using the http://docbook.sourceforge.net/[docbook-xsl] stylesheets.
+Форк русского перевода:
+https://github.com/ponyatov/gnu-eprog/tree/ru
 
-Required software install
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Этот документ написан на языке разметки
+http://www.methods.co.nz/asciidoc/[asciidoc], и конвертируется в HTML
+используя таблицы стилей http://docbook.sourceforge.net/[docbook-xsl] .
+
+Установка требуемого ПО
+~~~~~~~~~~~~~~~~~~~~~~~
 
 ------
 sudo apt install asciidoc docbook imgsizer dia
@@ -1902,10 +1905,10 @@ sudo apt install libsaxon-java libxslthl-java
 ------
 
 [[credits]]
-Credits
--------
+Участники проекта
+-----------------
 
-People
+Люди
 ~~~~~~
 
   * The original tutorial was written by Vijay Kumar B.,
@@ -1915,22 +1918,22 @@ People
     Jonathan Grant, David LeBlanc, reported typos and suggested
     fixes in the code and text.
 
-  * Dmitry Ponyatov added some info on build automation using make tool.
+  * Dmitry Ponyatov <dponyatov@gmail.com> added some info on build 
+    automation using make tool and made russian translation.
 	
-Tools
-~~~~~
+Утилиты
+~~~~~~~
 
-The following great free software tools were used for the construction
-of the tutorial.
+Это великолепное OpenSource ПО было использовано для создания учебника:
 
-  1. http://www.methods.co.nz/asciidoc/[asciidoc] for lightweight markup
-  2. http://www.xmlsoft.org/XSLT/xsltproc2.html[xsltproc] for HTML transformation
-  3. http://docbook.sourceforge.net/[docbook-xsl] for the stylesheets
-  4. http://softwaremaniacs.org/soft/highlight/en/[highlight.js] for syntax highlighting
-  5. http://www.gnome.org/projects/dia/[dia] for diagram creation
+  1. http://www.methods.co.nz/asciidoc/[asciidoc] для легкой разметки
+  2. http://www.xmlsoft.org/XSLT/xsltproc2.html[xsltproc] для трансляции в HTML
+  3. http://docbook.sourceforge.net/[docbook-xsl] таблицы стилей
+  4. http://softwaremaniacs.org/soft/highlight/en/[highlight.js] подстветка синтаксиса
+  5. http://www.gnome.org/projects/dia/[dia] создание диаграмм
   6. http://www.gosquared.com/liquidicity/archives/611[GoSquared Arrow
-     Icons] for the navigation icons
-  7. http://www.selenic.com/mercurial/[mercurial] for version control
+     Icons] иконки навигации
+  7. http://www.selenic.com/mercurial/[mercurial] контроль версий
   8. http://www.gnu.org/software/emacs/[emacs] ...
 
 [[copyright]]
