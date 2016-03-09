@@ -1767,27 +1767,28 @@ distclean: clean
 .PHONY-цели
 ~~~~~~~~~~~
 
-In previous makefile sample, you can see `.PHONY some` directives.
-This directives marks `target` is one that is not really the name of a file;
-rather it is just `a name for a recipe` to be executed when you make an 
-explicit request `make some` command.
+В предыдущем примере makefile вы можете увидеть директивы `.PHONY чтото'.
+Эти директивы `маркируют` указанную цель `чтото` так, что она `не является 
+именем файла`; `чтото` становится чем-то типа `имени рецепта` который будет
+выполнен, когда вы выполните команду `make чтото`. 
 
-If you write a rule whose `recipe goal will not create the target file`,
-mark it with .PHONY, and the recipe will be executed every time the target 
-comes up for remaking. Here is an example is `all` and `clean` targets.
+Если вы пишете правило, `целью которого НЕ является создание целевогоф файла`,
+сделайте это цель `.PHONY', и правило будет выполняться каждый раз, когда
+цель попадает в цепочку зависимостей файлов. Как пример -- цели `all` и 
+`clean`. 
 
-Because the rm command in `clean` rule does not create a file named "clean", 
-probably no such file will ever exist. Therefore, the rm command will be 
-executed every time you say ‘make clean’.
+Так как команда `rm` в правиле `clean` не создает файл с именем "clean",
+скорее всего такого файла вообще не существует. Поэтому `.PHONY clean` и
+команда `rm` будет выполняться каждый раз когда вы скажете ‘make clean’.
 
-NOTE: You can think about set of phony targets in Makefile as something
-like `command line menu`: you select required action by run `make action`
+NOTE: Вы можете считать набор .PHONY-целей в Makefile как что-то типа
+`меню командной строки`: вы выбираете требуемое действие запуская `make action`
 
 [[makeqemu]]
-Run qemu from `Makefile`
-~~~~~~~~~~~~~~~~~~~~~~~~
+Запуск Qemu из Makefile
+~~~~~~~~~~~~~~~~~~~~~~~
 
-If you define special `emu` rule:
+Определите специальное правило `emu`:
 ------
 .PHONY: emu
 emu: $(APP).flash
@@ -1796,33 +1797,34 @@ emu: $(APP).flash
 ------
 
 [[makefiles]]
-Some file/directory hints
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Некоторые трюки с именами файлов/каталогов
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can get APP name using hint:
+Вы можете получить имя программы APP используя хинт:
 
 ------
 APP = $(notdir $(CURDIR))
 ------
 
-`$(CURDIR)`:: gives you current directory, where you run make
+`$(CURDIR)`:: дает полное имя текущего каталога, где вы запустили `make`
 
-`$(notdir ...)`:: internal functions removes leading /home/user/... part of
-directory name
+`$(notdir ...)`:: встроенная функция, удаляет начальную часть `/home/user/...`
+из имени указанного каталога, возвращая только последний элемент .../`project`.
 
-Thus you automagically set APP name to current directory name, for example
-you made new project:
+Этот прием автомагически выставит значение переменной APP по имени текущего
+каталога, например вы создаете новый проект:
 
 ------
 $ cd ~
 $ mkdir superjob && cd superjob
 $ git init
-... write some code ...
+... еще какие-то команды и редактирование исходников ...
 $ make -f ~/universal.makefile
 ------
 
-NOTE: `-f` make option let you set file other then ./Makefile, you can use
-only one ~/universal.makefile for all of your projects.
+NOTE: опция `-f` программы `make` позволяет явно указать имя makeфайла
+вместо `./Makefile`, вы можете использовать единственный 
+`/home/user/universal.makefile` для всех ваших проектов.
 
 [[makerules]]
 Using pattern rules
