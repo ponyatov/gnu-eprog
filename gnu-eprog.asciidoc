@@ -1674,45 +1674,47 @@ QEMU 2.1.2 monitor - type 'help' for more information
 Теперь немного деталей... 
 
 [[makestdvars]]
-Standard make variables
-~~~~~~~~~~~~~~~~~~~~~~~
+Стандартные переменные
+~~~~~~~~~~~~~~~~~~~~~~
 
-Some vars widely used in makefiles of OpenSource program source packages.
-You can use this makefiles as samples for lot of make tricks, 
-not covered by this tutorial.
+Некоторые переменные широко используются в Makefileах в архивах исходников
+OpenSource программ. Вы можете использовать эти makeфайлы как примеры многих
+трюков `make`, не описанных в этом учебнике.
 
-`ARCH`:: target system architecture: arm, mips, i386, x86_64, avr,...
+`ARCH`:: архитектура целевой системы: arm, mips, i386, x86_64, avr,...
 
-`TARGET`:: target system `triplet`: arm-none-eabi, i486-none-elf, 
-i686-linux-uclibc, selects lot of cross-compiler config parameters, vastly
-impacts on compiled binary code: CPU command set, memory layout,...
+`TARGET`:: `триплет` целевой системы: arm-none-eabi, i486-none-elf, 
+i686-linux-uclibc,.. задает множество настроек кросс-компилятора, критично
+влияя на скомпилированный бинарный код: набор команд процессора, 
+распределение памяти,..
 
-`BUILD`:: triplet for your developer computer, something like x86_64-linux-gnu. 
-This var can be used if you build some helper programs, which must run on your
-workstation, for example to autogenerate some code for TARGET.
+`BUILD`:: триплет компьютера разработчика, что-то типа x86_64-linux-gnu. 
+Эта переменная может быть использована если вы собираете какие-то 
+вспомогательные программы, запускаемые на вашей рабочем компьютере, например
+автогенерация некоторого кода для `TARGET`.
 
-`AS`:: assembler program name, as be `as` for host system, and something like 
-`super-puper-elf-as` for crosscompiler toolchain
+`AS`:: имя программы ассемблера, `AS` будет `as` для build-системы, и что-то типа
+`super-puper-elf-as` для кросс-ассемблера
 
-`LD`:: linker
+`LD`:: линкер
 
-`CC`:: pure C compiler
+`CC`:: компилятор чистого Си
 
-`CXX`:: C++ compiler
+`CXX`:: компилятор C++
 
 `NM`::
 
 `OBJDUMP`::
 
-`OBJCOPY`:: object file tools
+`OBJCOPY`:: утилиты для объектных файлов
 
-`ASFLAGS`:: assembler flags
+`ASFLAGS`:: флаги ассемблера
 
-`LDFLAGS`:: linker flags
+`LDFLAGS`:: флаги линкера
 
-`CFLAGS`:: flags for C compiler, including optimization `OPT` variable 
+`CFLAGS`:: флаги для компилятора Си, включая переменную флагов оптимизации `OPT` 
 
-`CXXFLAGS`:: flags for C++ compiler 
+`CXXFLAGS`:: флаги для компилятора C++ 
 
 [[makestdtargets]]
 Standard targets
